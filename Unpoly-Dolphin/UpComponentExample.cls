@@ -20,7 +20,7 @@ componentClass
 
 exampleSource
 
-	^(self componentClass>>#renderContentOn:) sourceCode!
+	^(self componentClass>>#renderContentOn:) getSource!
 
 initialize
 
