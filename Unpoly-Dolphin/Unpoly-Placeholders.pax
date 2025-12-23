@@ -1,0 +1,99 @@
+﻿| package |
+package := Package name: 'Unpoly-Placeholders'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package classNames
+	add: #UpPlaceholderHtmlCanvas;
+	add: #UpPlaceholderTag;
+	yourself.
+
+package methodNames
+	add: #UpComponent -> #renderAsPlaceholder:class:on:;
+	add: #UpComponent -> #renderAsPlaceholder:on:;
+	add: #UpComponent -> #renderAsPlaceholderOn:;
+	add: 'UpComponent class' -> #asPlaceholder;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Seaside\Seaside\Seaside-Canvas'
+	'..\Seaside\Seaside\Seaside-Core'
+	'Unpoly-Core').
+
+package!
+
+"Class Definitions"!
+
+WATagBrush subclass: #UpPlaceholderTag
+	instanceVariableNames: 'tagBrush'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpHtmlCanvas subclass: #UpPlaceholderHtmlCanvas
+	instanceVariableNames: 'parentCanvas'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+"Loose Methods"!
+
+!UpComponent methodsFor!
+
+renderAsPlaceholder: aString class: classString on: html
+
+	"Render this component as a placeholder, i.e. a temporary view to be shown whilst waiting for a real view to load.
+	aString is the id of the placeholder.
+	classString is the style class of the placeholder (optional)"
+
+	| placeholderCanvas |
+
+	placeholderCanvas := UpPlaceholderHtmlCanvas on: html.
+
+	html template
+		id: aString;
+		with: 
+			[html div
+				class: classString;
+				with: [html context upRenderWithClass: UpPlaceholderHtmlCanvas during: [self renderContentOn: placeholderCanvas]]]!
+
+renderAsPlaceholder: aString on: html
+
+	"Render this component as a placeholder, i.e. a temporary view to be shown whilst waiting for a real view to load.
+	aString is the id of the placeholder"
+
+	^self renderAsPlaceholder: aString class: 'placeholder-wave' on: html!
+
+renderAsPlaceholderOn: html
+
+	"Render this component as a placeholder, i.e. a temporary view to be shown whilst waiting for a real view to load"
+
+	^self renderAsPlaceholder: self class asPlaceholder on: html! !
+
+!UpComponent categoriesForMethods!
+renderAsPlaceholder:class:on:!public!rendering/placeholders! !
+renderAsPlaceholder:on:!public!rendering/placeholders! !
+renderAsPlaceholderOn:!public!rendering/placeholders! !
+!
+
+!UpComponent class methodsFor!
+
+asPlaceholder
+
+	"Return a reasonably nice stringified version of the receiver to use as an id for a placeholder"
+
+	^self name asHtmlTagId, '-placeholder'! !
+
+!UpComponent class categoriesForMethods!
+asPlaceholder!public! !
+!
+
+"End of package definition"!
+

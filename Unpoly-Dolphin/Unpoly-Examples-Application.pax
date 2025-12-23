@@ -1,0 +1,147 @@
+﻿| package |
+package := Package name: 'Unpoly-Examples-Application'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package classNames
+	add: #UpCompaniesApplication;
+	add: #UpCompany;
+	add: #UpCompanyEditor;
+	add: #UpCompanyPresenter;
+	add: #UpCompanyProjects;
+	add: #UpExampleApplication;
+	add: #UpExampleDatabase;
+	add: #UpExampleEditor;
+	add: #UpExampleModel;
+	add: #UpExamplePresenter;
+	add: #UpNameSuggester;
+	add: #UpProject;
+	add: #UpProjectEditor;
+	add: #UpProjectPresenter;
+	add: #UpProjectsApplication;
+	yourself.
+
+package methodNames
+	add: #UpComponent -> #database;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Core\Object Arts\Dolphin\System\Random\Dolphin Random Stream'
+	'Unpoly-Core'
+	'Unpoly-Examples').
+
+package!
+
+"Class Definitions"!
+
+Object subclass: #UpExampleDatabase
+	instanceVariableNames: 'companies projects'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+Object subclass: #UpExampleModel
+	instanceVariableNames: 'id name'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpExampleEditor
+	instanceVariableNames: 'model errorMessages'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpExamplePresenter
+	instanceVariableNames: 'model'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpNameSuggester
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExample subclass: #UpExampleApplication
+	instanceVariableNames: 'searchValue'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleApplication subclass: #UpCompaniesApplication
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleApplication subclass: #UpProjectsApplication
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpProjectsApplication subclass: #UpCompanyProjects
+	instanceVariableNames: 'company'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleEditor subclass: #UpCompanyEditor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleEditor subclass: #UpProjectEditor
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExamplePresenter subclass: #UpCompanyPresenter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExamplePresenter subclass: #UpProjectPresenter
+	instanceVariableNames: 'project'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleModel subclass: #UpCompany
+	instanceVariableNames: 'address projects'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExampleModel subclass: #UpProject
+	instanceVariableNames: 'budget company'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+"Loose Methods"!
+
+!UpComponent methodsFor!
+
+database
+
+	^self session properties at: #database! !
+
+!UpComponent categoriesForMethods!
+database!accessing!public! !
+!
+
+"End of package definition"!
+

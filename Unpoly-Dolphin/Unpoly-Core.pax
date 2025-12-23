@@ -1,0 +1,643 @@
+﻿| package |
+package := Package name: 'Unpoly-Core'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package classNames
+	add: #UpBootstrap5Library;
+	add: #UpComponent;
+	add: #UpDecoration;
+	add: #UpDeploymentLibrary;
+	add: #UpEvent;
+	add: #UpHtmlCanvas;
+	add: #UpHtmlDocument;
+	add: #UpInitialRenderLoopContinuation;
+	add: #UpLayer;
+	add: #UpLayerDecoration;
+	add: #UpLayerHostDecoration;
+	add: #UpNotificationDecoration;
+	add: #UpRenderPhaseContinuation;
+	add: #UpRootComponent;
+	add: #UpSelectiveRenderingHtmlDocument;
+	add: #UpSession;
+	add: #UpSessionTrackingStrategy;
+	yourself.
+
+package methodNames
+	add: #String -> #asUpTarget;
+	add: #WAAnchorTag -> #callbackKey;
+	add: #WAAnchorTag -> #showLayer:;
+	add: #WAAnchorTag -> #upInitialize;
+	add: #WABasicFormTag -> #upInitialize;
+	add: #WACallbackRegistry -> #callbacks;
+	add: #WACallbackRegistry -> #removeKeysNotIn:;
+	add: #WADecoration -> #upLayerDecoration;
+	add: #WADocument -> #isRendering;
+	add: #WAFormInputTag -> #callbackKey;
+	add: #WAKeyGeneratorTag -> #callbackKey;
+	add: #WAOptionTag -> #callbackKey;
+	add: #WARadioButtonTag -> #callbackKey;
+	add: #WARenderContext -> #upOverrideRendererClass;
+	add: #WARenderContext -> #upRenderWithClass:during:;
+	add: #WARequest -> #isUpValidating;
+	add: #WARequest -> #upTarget;
+	add: #WARequest -> #upValidate;
+	add: #WAResponse -> #upEvent:;
+	add: #WAResponse -> #upEvents:;
+	add: #WASelectTag -> #callbackKey;
+	add: #WATagBrush -> #asUpTarget;
+	add: #WATagBrush -> #beUpTarget;
+	add: #WATagBrush -> #callbackKey;
+	add: #WATagBrush -> #upAcceptEvent:;
+	add: #WATagBrush -> #upAlias:;
+	add: #WATagBrush -> #upAnchored:;
+	add: #WATagBrush -> #upAutoSubmit:;
+	add: #WATagBrush -> #upBefore;
+	add: #WATagBrush -> #upCache:;
+	add: #WATagBrush -> #upConfirm:;
+	add: #WATagBrush -> #upContent:;
+	add: #WATagBrush -> #upContext:;
+	add: #WATagBrush -> #upDisable:;
+	add: #WATagBrush -> #upDismissable:;
+	add: #WATagBrush -> #upDismissEvent:;
+	add: #WATagBrush -> #upDuration:;
+	add: #WATagBrush -> #upFlashes:;
+	add: #WATagBrush -> #upFollow:;
+	add: #WATagBrush -> #upHistory:;
+	add: #WATagBrush -> #upInitialize;
+	add: #WATagBrush -> #upLayer:;
+	add: #WATagBrush -> #upLocation:;
+	add: #WATagBrush -> #upMain:;
+	add: #WATagBrush -> #upMethod:;
+	add: #WATagBrush -> #upMode:;
+	add: #WATagBrush -> #upOnDismissed:;
+	add: #WATagBrush -> #upOnError:;
+	add: #WATagBrush -> #upOnOpened:;
+	add: #WATagBrush -> #upPlaceholder:;
+	add: #WATagBrush -> #upPreload:;
+	add: #WATagBrush -> #upPreview:;
+	add: #WATagBrush -> #upSubmit:;
+	add: #WATagBrush -> #upTarget:;
+	add: #WATagBrush -> #upTitle:;
+	add: #WATagBrush -> #upTransition:;
+	add: #WATagBrush -> #upValidate:;
+	add: #WATagBrush -> #upWatchDelay:;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Seaside-Bootstrap5\Bootstrap5-Core'
+	'..\Seaside-Extras-Dolphin\Bootstrap5-Extras'
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Core\Object Arts\Dolphin\MVP\Base\Dolphin MVP Base'
+	'..\Grease\Grease-Core'
+	'..\Seaside\Javascript\Javascript-Core'
+	'..\Seaside-Extras-Dolphin\Javascript-Extras'
+	'..\Seaside\Seaside\Seaside-Canvas'
+	'..\Seaside\Seaside\Seaside-Component'
+	'..\Seaside\Seaside\Seaside-Core'
+	'..\Seaside\Seaside\Seaside-RenderLoop'
+	'..\Seaside\Seaside\Seaside-Session'
+	'..\Seaside\Seaside\Seaside-Tools-Core'
+	'..\Core\Object Arts\Dolphin\ActiveX\Shell\Windows Shell').
+
+package setManualPrerequisites: #(
+	'Bootstrap5-Extras'
+	'Javascript-Extras').
+
+package!
+
+"Class Definitions"!
+
+WAObject subclass: #UpEvent
+	instanceVariableNames: 'type layer properties'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WAObject subclass: #UpLayer
+	instanceVariableNames: 'id mode componentBlock component context parent placeholder onClosed onClosedReload upDismissable'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+SBSFileLibrary subclass: #UpBootstrap5Library
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+SBSFileLibrary subclass: #UpDeploymentLibrary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WAHtmlDocument subclass: #UpHtmlDocument
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpHtmlDocument subclass: #UpSelectiveRenderingHtmlDocument
+	instanceVariableNames: 'renderingDepth silencedStream classesToRender idsToRender callbackKeys'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WACookieOnlySessionTrackingStrategy subclass: #UpSessionTrackingStrategy
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+SBSComponent subclass: #UpComponent
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpRootComponent
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WADecoration subclass: #UpDecoration
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpDecoration subclass: #UpLayerDecoration
+	instanceVariableNames: 'layer'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpDecoration subclass: #UpLayerHostDecoration
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpDecoration subclass: #UpNotificationDecoration
+	instanceVariableNames: 'div'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+SBSHtmlCanvas subclass: #UpHtmlCanvas
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WASession subclass: #UpSession
+	instanceVariableNames: 'layerHost layers notification'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WAInitialRenderLoopContinuation subclass: #UpInitialRenderLoopContinuation
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WARenderPhaseContinuation subclass: #UpRenderPhaseContinuation
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+"Loose Methods"!
+
+!String methodsFor!
+
+asUpTarget
+
+	^self! !
+
+!String categoriesForMethods!
+asUpTarget!converting!idb goodies!public! !
+!
+
+!WAAnchorTag methodsFor!
+
+callbackKey
+
+	(url notNil and: [url isString not and: [url path = canvas actionUrl path]]) ifTrue: 
+		[url _queryFields ifNotNil: 
+			[ :queryFields |
+			queryFields keysAndValuesDo: [ :key :value | (value isNil and: [key allSatisfy: [ :char | char isDigit]]) ifTrue: [^key]]]].
+
+	^nil!
+
+showLayer: anUpLayer
+
+	"When this link is followed show anUpLayer with its configured component and behavior"
+
+	anUpLayer 
+		id: (self session nextLayerIdOn: canvas);
+		configureAnchorTag: self!
+
+upInitialize
+
+	super upInitialize.
+
+	self upFollow: true! !
+
+!WAAnchorTag categoriesForMethods!
+callbackKey!attributes/unpoly!private! !
+showLayer:!callbacks!public! !
+upInitialize!initialization!private! !
+!
+
+!WABasicFormTag methodsFor!
+
+upInitialize
+
+	super upInitialize.
+
+	self 
+		upSubmit: true;
+		upHistory: false! !
+
+!WABasicFormTag categoriesForMethods!
+upInitialize!initialization!private! !
+!
+
+!WACallbackRegistry methodsFor!
+
+callbacks
+
+	^callbacks!
+
+removeKeysNotIn: aCollection
+
+	(callbacks keys difference: aCollection) do: [ :each | callbacks removeKey: each]! !
+
+!WACallbackRegistry categoriesForMethods!
+callbacks!private! !
+removeKeysNotIn:!private! !
+!
+
+!WADecoration methodsFor!
+
+upLayerDecoration
+
+	^self next isDecoration 
+		ifTrue: [self next upLayerDecoration]
+		ifFalse: [nil]! !
+
+!WADecoration categoriesForMethods!
+upLayerDecoration!accessing!public! !
+!
+
+!WADocument methodsFor!
+
+isRendering
+
+	^true! !
+
+!WADocument categoriesForMethods!
+isRendering!public!testing! !
+!
+
+!WAFormInputTag methodsFor!
+
+callbackKey
+
+	^attributes at: 'name' ifAbsent: [nil]! !
+
+!WAFormInputTag categoriesForMethods!
+callbackKey!callbacks!public! !
+!
+
+!WAKeyGeneratorTag methodsFor!
+
+callbackKey
+
+	^attributes at: 'name' ifAbsent: [nil]! !
+
+!WAKeyGeneratorTag categoriesForMethods!
+callbackKey!callbacks!public! !
+!
+
+!WAOptionTag methodsFor!
+
+callbackKey
+
+	^attributes at: 'value' ifAbsent: [nil]! !
+
+!WAOptionTag categoriesForMethods!
+callbackKey!callbacks!public! !
+!
+
+!WARadioButtonTag methodsFor!
+
+callbackKey
+
+	^attributes at: 'value' ifAbsent: [nil]! !
+
+!WARadioButtonTag categoriesForMethods!
+callbackKey!callbacks!public! !
+!
+
+!WARenderContext methodsFor!
+
+upOverrideRendererClass
+
+	^self properties at: #upOverrideRendererClass ifAbsent: [nil]!
+
+upRenderWithClass: aRendererClass during: aBlock
+
+	| previous |
+
+	previous := properties at: #upOverrideRendererClass ifAbsent: [nil].
+
+	properties at: #upOverrideRendererClass put: aRendererClass.
+	aBlock ensure: 
+		[previous isNil 
+			ifTrue: [properties removeKey: #upOverrideRendererClass]
+			ifFalse: [properties at: #upOverrideRendererClass put: previous]]! !
+
+!WARenderContext categoriesForMethods!
+upOverrideRendererClass!accessing!public! !
+upRenderWithClass:during:!accessing!public! !
+!
+
+!WARequest methodsFor!
+
+isUpValidating
+
+	^self upValidate notNil!
+
+upTarget
+
+	^self headerAt: 'X-Up-Target' ifAbsent: [nil]!
+
+upValidate
+
+	^self headerAt: 'X-Up-Validate' ifAbsent: [nil]! !
+
+!WARequest categoriesForMethods!
+isUpValidating!accessing/unpoly!private! !
+upTarget!accessing/unpoly!private! !
+upValidate!accessing/unpoly!private! !
+!
+
+!WAResponse methodsFor!
+
+upEvent: anUpEvent
+
+	self upEvents: {anUpEvent}!
+
+upEvents: aCollection
+
+	| stream |
+
+	stream := WriteStream on: String new.
+	stream nextPut: $[.
+	aCollection do: [ :each | each writeRelaxedJsonOn: stream].
+	stream nextPut: $].
+
+	self headerAt: 'X-Up-Events' put: stream contents
+
+
+! !
+
+!WAResponse categoriesForMethods!
+upEvent:!accessing/headers!accessing/unpoly!public! !
+upEvents:!accessing/headers!accessing/unpoly!public! !
+!
+
+!WASelectTag methodsFor!
+
+callbackKey
+
+	^attributes at: 'name' ifAbsent: [nil]! !
+
+!WASelectTag categoriesForMethods!
+callbackKey!callbacks!public! !
+!
+
+!WATagBrush methodsFor!
+
+asUpTarget
+
+	^self id 
+		ifNil: [self error: 'no id - send #beUpTarget before assigning me as an upTarget']
+		ifNotNil: [ :id | '#', id]!
+
+beUpTarget
+
+	"an id is required"
+
+	self ensureId!
+
+callbackKey
+
+	"Answer the key of the callback attached to the receiver or nil if none"
+
+	^nil!
+
+upAcceptEvent: aString
+
+	self attributeAt: 'up-accept-event' put: aString!
+
+upAlias: aString
+
+	self attributeAt: 'up-alias' put: aString!
+
+upAnchored: aString
+
+	"Only right supported - see https://unpoly.com/up-anchored-right"
+
+	self attributeAt: 'up-anchored' put: aString!
+
+upAutoSubmit: aBoolean
+
+	self attributeAt: 'up-autosubmit' put: aBoolean!
+
+upBefore
+
+	"Private - Unpoly-specific vairant of before. Sent immediately before writing the receiver onto the document"
+
+	self attributes removeKey: #_tag_ ifAbsent: []!
+
+upCache: aStringOrBoolean
+
+	self attributeAt: 'up-cache' put: aStringOrBoolean asString!
+
+upConfirm: aString
+
+	self attributeAt: 'up-confirm' put: aString!
+
+upContent: aString
+
+	self attributeAt: 'up-content' put: aString!
+
+upContext: anObject
+
+	self attributeAt: 'up-context' put: anObject!
+
+upDisable: aBoolean
+
+	self attributeAt: 'up-disable' put: aBoolean asString!
+
+upDismissable: aBooleanOrString
+
+	self attributeAt: 'up-dismissable' put: aBooleanOrString asString!
+
+upDismissEvent: aString
+
+	self attributeAt: 'up-dismiss-event' put: aString!
+
+upDuration: anInteger
+
+	"milliseconds"
+
+	self attributeAt: 'up-duration' put: anInteger asString!
+
+upFlashes: aBoolean
+
+	self attributeAt: 'up-flashes' put: aBoolean!
+
+upFollow: aBoolean
+
+	self attributeAt: 'up-follow' put: aBoolean asString!
+
+upHistory: aStringOrBoolean
+
+	self attributeAt: 'up-history' put: aStringOrBoolean asString!
+
+upInitialize
+
+	"Private - Set any defaults for this brush when used in Unpoly"
+
+	self attributeAt: #_tag_ put: self!
+
+upLayer: aString
+
+	self attributeAt: 'up-layer' put: aString!
+
+upLocation: aStringOrBoolean
+
+	self attributeAt: 'up-location' put: aStringOrBoolean asString!
+
+upMain: aBoolean
+
+	self attributeAt: 'up-main' put: aBoolean!
+
+upMethod: aString
+
+	self attributeAt: 'up-method' put: aString!
+
+upMode: aString
+
+	self attributeAt: 'up-mode' put: aString!
+
+upOnDismissed: aJSFunction
+
+	self attributeAt: 'up-on-dismissed' put: aJSFunction!
+
+upOnError: aString
+
+	self attributeAt: 'up-on-error' put: aString!
+
+upOnOpened: aString
+
+	self attributeAt: 'up-on-opened' put: aString!
+
+upPlaceholder: aString
+
+	"Convenience - allow the name to be specified without the required preceeding # character"
+
+	aString first = $#
+		ifTrue: [self attributeAt: 'up-placeholder' put: aString]
+		ifFalse: [self upPlaceholder: '#', aString]!
+
+upPreload: aStringOrBoolean
+
+	self attributeAt: 'up-preload' put: aStringOrBoolean asString!
+
+upPreview: aString
+
+	self attributeAt: 'up-preview' put: aString!
+
+upSubmit: aBoolean
+
+	self attributeAt: 'up-submit' put: aBoolean!
+
+upTarget: anObject
+
+	"anObject may be a String denoting an html id/class/element with the appropriate prefix (# / . / :)
+	or a previously-rendered Tag object"
+
+	self attributeAt: 'up-target' put: anObject asUpTarget!
+
+upTitle: aStringOrBoolean
+
+	self attributeAt: 'up-title' put: aStringOrBoolean!
+
+upTransition: aString
+
+	self attributeAt: 'up-transition' put: aString!
+
+upValidate: aStringOrBoolean
+
+	self attributeAt: 'up-validate' put: aStringOrBoolean asString!
+
+upWatchDelay: anInteger
+
+	self attributeAt: 'up-watch-delay' put: anInteger! !
+
+!WATagBrush categoriesForMethods!
+asUpTarget!attributes/unpoly!private! !
+beUpTarget!attributes/unpoly!public! !
+callbackKey!attributes/unpoly!private! !
+upAcceptEvent:!attributes/unpoly!public! !
+upAlias:!attributes/unpoly!public! !
+upAnchored:!attributes/unpoly!public! !
+upAutoSubmit:!attributes/unpoly!public! !
+upBefore!attributes/unpoly!private! !
+upCache:!attributes/unpoly!public! !
+upConfirm:!attributes/unpoly!public! !
+upContent:!attributes/unpoly!public! !
+upContext:!attributes/unpoly!public! !
+upDisable:!attributes/unpoly!public! !
+upDismissable:!attributes/unpoly!public! !
+upDismissEvent:!attributes/unpoly!public! !
+upDuration:!attributes/unpoly!public! !
+upFlashes:!attributes/unpoly!public! !
+upFollow:!attributes/unpoly!public! !
+upHistory:!attributes/unpoly!public! !
+upInitialize!initialization!private! !
+upLayer:!attributes/unpoly!public! !
+upLocation:!attributes/unpoly!public! !
+upMain:!attributes/unpoly!public! !
+upMethod:!attributes/unpoly!public! !
+upMode:!attributes/unpoly!public! !
+upOnDismissed:!attributes/unpoly!public! !
+upOnError:!attributes/unpoly!public! !
+upOnOpened:!attributes/unpoly!public! !
+upPlaceholder:!attributes/unpoly!public! !
+upPreload:!attributes/unpoly!public! !
+upPreview:!attributes/unpoly!public! !
+upSubmit:!attributes/unpoly!public! !
+upTarget:!attributes/unpoly!public! !
+upTitle:!attributes/unpoly!public! !
+upTransition:!attributes/unpoly!public! !
+upValidate:!attributes/unpoly!public! !
+upWatchDelay:!attributes/unpoly!public! !
+!
+
+"End of package definition"!
+

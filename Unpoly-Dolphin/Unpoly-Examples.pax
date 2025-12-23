@@ -1,0 +1,123 @@
+﻿| package |
+package := Package name: 'Unpoly-Examples'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package classNames
+	add: #UpComponentExample;
+	add: #UpCounter;
+	add: #UpCounterExample;
+	add: #UpExample;
+	add: #UpExamplesBrowser;
+	add: #UpExamplesLibrary;
+	add: #UpIntroduction;
+	add: #UpMultiCounter;
+	add: #UpMultiCounterExample;
+	yourself.
+
+package methodNames
+	add: #WAComponent -> #exampleWait;
+	add: #WAComponent -> #hasExampleDelay;
+	add: #WAComponent -> #hasExampleDelay:;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Seaside-Bootstrap5\Bootstrap5-Core'
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Grease\Grease-Core'
+	'..\Seaside\Seaside\Seaside-Component'
+	'..\Seaside\Seaside\Seaside-Core'
+	'..\Seaside\Seaside\Seaside-Dolphin-Core'
+	'..\Seaside\Seaside\Seaside-Examples'
+	'Unpoly-Core').
+
+package!
+
+"Class Definitions"!
+
+SBSFileLibrary subclass: #UpExamplesLibrary
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpExample
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExample subclass: #UpComponentExample
+	instanceVariableNames: 'component'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpExample subclass: #UpIntroduction
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponentExample subclass: #UpCounterExample
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponentExample subclass: #UpMultiCounterExample
+	instanceVariableNames: 'counters'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpRootComponent subclass: #UpExamplesBrowser
+	instanceVariableNames: 'currentExample examples'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WACounter subclass: #UpCounter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+WAMultiCounter subclass: #UpMultiCounter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+"Loose Methods"!
+
+!WAComponent methodsFor!
+
+exampleWait
+
+	^self session properties at: #exampleWaitDuration ifPresent: [ :duration | duration wait]!
+
+hasExampleDelay
+
+	^self session properties includesKey: #exampleWaitDuration!
+
+hasExampleDelay: aBoolean
+
+	aBoolean 
+		ifTrue: [self session properties at: #exampleWaitDuration put: 2 seconds]
+		ifFalse: [self session properties removeKey: #exampleWaitDuration]! !
+
+!WAComponent categoriesForMethods!
+exampleWait!operations!public! !
+hasExampleDelay!operations!public! !
+hasExampleDelay:!operations!public! !
+!
+
+"End of package definition"!
+
