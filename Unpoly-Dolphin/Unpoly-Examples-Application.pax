@@ -1,7 +1,8 @@
 ﻿| package |
 package := Package name: 'Unpoly-Examples-Application'.
 package paxVersion: 1;
-	basicComment: ''.
+	basicComment: '(WAHttpServerAdaptor port: 8080) start.
+ShellLibrary default shellOpen: ''http://localhost:8080/unpoly/'''.
 
 package classNames
 	add: #UpCompaniesApplication;
@@ -35,7 +36,11 @@ package setPrerequisites: #(
 	'..\Core\Object Arts\Dolphin\Base\Dolphin'
 	'..\Core\Object Arts\Dolphin\System\Random\Dolphin Random Stream'
 	'Unpoly-Core'
-	'Unpoly-Examples').
+	'Unpoly-Examples'
+	'Unpoly-Placeholders').
+
+package setManualPrerequisites: #(
+	'Unpoly-Placeholders').
 
 package!
 

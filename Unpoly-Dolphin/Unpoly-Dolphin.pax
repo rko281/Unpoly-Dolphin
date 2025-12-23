@@ -1,0 +1,25 @@
+﻿| package |
+package := Package name: 'Unpoly-Dolphin'.
+package paxVersion: 1;
+	basicComment: 'Unpoly-Dolphin
+https://github.com/rko281/Unpoly-Dolphin
+
+A Seaside component for Dolphin Smalltalk wrapping Unpoly (https://unpoly.com/)
+'.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'Unpoly-Examples-Application').
+
+package setManualPrerequisites: #(
+	'Unpoly-Examples-Application').
+
+package!
+
+"End of package definition"!
+
