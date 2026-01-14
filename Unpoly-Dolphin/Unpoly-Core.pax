@@ -34,7 +34,6 @@ package methodNames
 	add: #WADecoration -> #upLayerDecoration;
 	add: #WADocument -> #isRendering;
 	add: #WAFormInputTag -> #callbackKey;
-	add: #WAKeyGeneratorTag -> #callbackKey;
 	add: #WAOptionTag -> #callbackKey;
 	add: #WARadioButtonTag -> #callbackKey;
 	add: #WARenderContext -> #upOverrideRendererClass;
@@ -320,16 +319,6 @@ callbackKey
 callbackKey!callbacks!public! !
 !
 
-!WAKeyGeneratorTag methodsFor!
-
-callbackKey
-
-	^attributes at: 'name' ifAbsent: [nil]! !
-
-!WAKeyGeneratorTag categoriesForMethods!
-callbackKey!callbacks!public! !
-!
-
 !WAOptionTag methodsFor!
 
 callbackKey
@@ -337,7 +326,7 @@ callbackKey
 	^attributes at: 'value' ifAbsent: [nil]! !
 
 !WAOptionTag categoriesForMethods!
-callbackKey!callbacks!public! !
+callbackKey!attributes/unpoly!private! !
 !
 
 !WARadioButtonTag methodsFor!
