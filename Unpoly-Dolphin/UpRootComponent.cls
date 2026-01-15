@@ -67,6 +67,11 @@ updateRoot: htmlRoot
 
 	super updateRoot: htmlRoot.
 
+	"Use Unpoly for all links and forms"
+	htmlRoot 
+		addScript: 'up.link.config.followSelectors.push(''a[href]'')';
+		addScript: 'up.form.config.submitSelectors.push([''form''])'.
+
 	self shouldDisableUnpolyCaching ifTrue: [htmlRoot addScript: 'up.network.config.autoCache = function(request) {return false}'].
 
 	self addUnauthorizedRequestHandlerToRoot: htmlRoot.

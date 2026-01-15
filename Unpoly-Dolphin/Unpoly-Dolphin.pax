@@ -5,7 +5,10 @@ package paxVersion: 1;
 https://github.com/rko281/Unpoly-Dolphin
 
 A Seaside component for Dolphin Smalltalk wrapping Unpoly (https://unpoly.com/)
-'.
+
+To start:
+(WAHttpServerAdaptor port: 8080) start.
+ShellLibrary default shellOpen: ''http://localhost:8080/unpoly/'''.
 
 package binaryGlobalNames: (Set new
 	yourself).

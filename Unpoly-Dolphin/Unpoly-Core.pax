@@ -27,7 +27,8 @@ package methodNames
 	add: #String -> #asUpTarget;
 	add: #WAAnchorTag -> #callbackKey;
 	add: #WAAnchorTag -> #showLayer:;
-	add: #WAAnchorTag -> #upInitialize;
+	add: #WAAnchorTag -> #upBefore;
+	add: #WAAnchorTag -> #upLocation;
 	add: #WABasicFormTag -> #upInitialize;
 	add: #WACallbackRegistry -> #callbacks;
 	add: #WACallbackRegistry -> #removeKeysNotIn:;
@@ -246,16 +247,22 @@ showLayer: anUpLayer
 		id: (self session nextLayerIdOn: canvas);
 		configureAnchorTag: self!
 
-upInitialize
+upBefore
 
-	super upInitialize.
+	"If we are not following an explicit URL then we don't want to update the location"
+	(self upLocation isNil and: [self callbackKey notNil]) ifTrue: [self upLocation: false].
 
-	self upFollow: true! !
+	super upBefore!
+
+upLocation
+
+	^self attributeAt: 'up-location' ifAbsent: [nil]! !
 
 !WAAnchorTag categoriesForMethods!
 callbackKey!attributes/unpoly!private! !
 showLayer:!callbacks!public! !
-upInitialize!initialization!private! !
+upBefore!initialization!private! !
+upLocation!attributes/unpoly!private! !
 !
 
 !WABasicFormTag methodsFor!
@@ -264,9 +271,7 @@ upInitialize
 
 	super upInitialize.
 
-	self 
-		upSubmit: true;
-		upHistory: false! !
+	self upHistory: false! !
 
 !WABasicFormTag categoriesForMethods!
 upInitialize!initialization!private! !

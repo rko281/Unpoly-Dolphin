@@ -105,7 +105,6 @@ contextAt: aSymbol
 	^self context at: aSymbol!
 
 contextAt: aSymbol ifAbsent: aBlock
-parent == self ifTrue: [self halt].
 
 	^self context at: aSymbol ifAbsent: 
 		[self parent isNil 
@@ -113,7 +112,6 @@ parent == self ifTrue: [self halt].
 			ifFalse: [self parent contextAt: aSymbol ifAbsent: aBlock]]!
 
 contextAt: aSymbol ifPresent: aBlock
-parent == self ifTrue: [self halt].
 
 	self context at: aSymbol ifPresent: [ :val | ^aBlock value: val].
 
