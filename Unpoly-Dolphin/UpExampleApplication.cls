@@ -175,12 +175,7 @@ searchValue
 
 searchValue: aString
 	searchValue := aString.
-	self exampleWait!
-
-updateRoot: htmlRoot
-
-	self beLayerHost.
-	^super updateRoot: htmlRoot! !
+	self exampleWait! !
 
 !UpExampleApplication categoriesForMethods!
 add:!add/remove!public! !
@@ -205,7 +200,6 @@ renderTableOn:!public!rendering! !
 searchPattern!accessing!public! !
 searchValue!accessing!private! !
 searchValue:!accessing!private! !
-updateRoot:!accessing!public! !
 !
 
 !UpExampleApplication class methodsFor!

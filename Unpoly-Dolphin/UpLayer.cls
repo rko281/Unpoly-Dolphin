@@ -22,17 +22,6 @@ bePopup
 
 	self mode: #popup!
 
-callOnAnswer: aBlock
-
-	| session |
-
-	session := self session.
-
-	componentBlock isNil ifFalse: [self component: componentBlock value].
-
-	session addLayer: self.
-	session layerHost call: component onAnswer: aBlock!
-
 closeEventType
 
 	^##(self) closeEventType!
@@ -70,6 +59,7 @@ configureAnchorTag: aWAAnchorTag
 
 	aWAAnchorTag
 		upLocation: false;
+		upNoTab: true;  "<- since layers effectively follow call:answer: semantics opening in a new tab rarely makes sense. Idea: allow a non-layered alternative to be specified"
 		upLayer: 'new ', self mode;
 		upDismissEvent: self closeEventType;
 		upOnOpened: self onOpenedSnippet;
@@ -80,6 +70,7 @@ configureAnchorTag: aWAAnchorTag
 	self placeholder ifNotNil: [ :upPlaceholder | aWAAnchorTag upPlaceholder: upPlaceholder].
 	self context isEmpty ifFalse: [aWAAnchorTag upContext: self context asJson].
 
+	self parent: aWAAnchorTag upComponent.
 	aWAAnchorTag callback: [self show]!
 
 containing: anUpComponentOrBlock
@@ -107,15 +98,15 @@ contextAt: aSymbol
 contextAt: aSymbol ifAbsent: aBlock
 
 	^self context at: aSymbol ifAbsent: 
-		[self parent isNil 
-			ifTrue: [aBlock value]
-			ifFalse: [self parent contextAt: aSymbol ifAbsent: aBlock]]!
+		[self parentLayer
+			ifNil: [aBlock value]
+			ifNotNil: [ :parentLayer | parentLayer contextAt: aSymbol ifAbsent: aBlock]]!
 
 contextAt: aSymbol ifPresent: aBlock
 
 	self context at: aSymbol ifPresent: [ :val | ^aBlock value: val].
 
-	^self parent isNil ifFalse: [self parent contextAt: aSymbol ifPresent: aBlock]!
+	^self parentLayer ifNotNil: [ :parentLayer | parentLayer contextAt: aSymbol ifPresent: aBlock]!
 
 contextAt: aSymbol put: aStringOrNil
 
@@ -205,7 +196,6 @@ onErrorSnippet
 
 onLayerClosed: anUpEvent
 
-	self parent: nil.
 	self component answer: anUpEvent.
 
 	anUpEvent respond: self onClosedReload!
@@ -227,6 +217,10 @@ parent
 parent: anObject
 	parent := anObject!
 
+parentLayer
+
+	^self parent layer!
+
 placeholder
 
 	"A reference to a component to be shown as a placeholder in this layer whilst it is opening.
@@ -246,7 +240,11 @@ show
 	"Show this layer with the configured component.
 	When the layer is closed evaluate resultBlock (if not nil) with the closing event"
 
-	self callOnAnswer: 
+	componentBlock isNil ifFalse: [self component: componentBlock value].
+
+	self session addLayer: self.
+
+	self topComponent call: component onAnswer: 
 		[ :answer || closeEvent | 
 		"If #answer: was invoked in response to the layer being dismissed (e.g. user clicked X button) then answer will be the actual dismissal event.
 		If newComponent invoked #answer: itself then we must trigger an event to close the layer"
@@ -262,6 +260,12 @@ show
 
 		onClosed isNil ifFalse: [onClosed value: closeEvent].
 		closeEvent isDismissal ifFalse: [self requestContext respond: [ :response | response upEvent: closeEvent]]]!
+
+topComponent
+
+	^self parentLayer
+		ifNil: [self parent]
+		ifNotNil: [ :parentLayer | parentLayer topComponent]!
 
 upDismissable
 
@@ -290,7 +294,6 @@ upDismissable: aStringOrBoolean
 !UpLayer categoriesForMethods!
 beModal!initialization!public! !
 bePopup!initialization!public! !
-callOnAnswer:!operations!private! !
 closeEventType!constants!private! !
 component!accessing!public! !
 component:!accessing!public! !
@@ -320,9 +323,11 @@ onLayerOpened:!event handling!public! !
 onOpenedSnippet!constants!public! !
 parent!accessing!public! !
 parent:!accessing!public! !
+parentLayer!accessing!public! !
 placeholder!accessing!public! !
 placeholder:!accessing!public! !
 show!operations!public! !
+topComponent!accessing!public! !
 upDismissable!accessing!public! !
 upDismissable:!accessing!public! !
 !

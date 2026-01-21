@@ -28,7 +28,7 @@ increase
 
 renderContentOn: html
 
-	| rq counter |
+	| counter |
 
 	html row with: 
 		[(html columnUnits: 12)

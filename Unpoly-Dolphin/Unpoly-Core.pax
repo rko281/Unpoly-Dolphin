@@ -14,21 +14,25 @@ package classNames
 	add: #UpInitialRenderLoopContinuation;
 	add: #UpLayer;
 	add: #UpLayerDecoration;
-	add: #UpLayerHostDecoration;
+	add: #UpNoTabFilter;
 	add: #UpNotificationDecoration;
 	add: #UpRenderPhaseContinuation;
-	add: #UpRootComponent;
+	add: #UpRootComponentDecoration;
 	add: #UpSelectiveRenderingHtmlDocument;
 	add: #UpSession;
 	add: #UpSessionTrackingStrategy;
 	yourself.
 
 package methodNames
+	add: #SBSLinkButtonTag -> #upNoTabDefault;
 	add: #String -> #asUpTarget;
 	add: #WAAnchorTag -> #callbackKey;
 	add: #WAAnchorTag -> #showLayer:;
 	add: #WAAnchorTag -> #upBefore;
 	add: #WAAnchorTag -> #upLocation;
+	add: #WAAnchorTag -> #upNoTab;
+	add: #WAAnchorTag -> #upNoTab:;
+	add: #WAAnchorTag -> #upNoTabDefault;
 	add: #WABasicFormTag -> #upInitialize;
 	add: #WACallbackRegistry -> #callbacks;
 	add: #WACallbackRegistry -> #removeKeysNotIn:;
@@ -37,6 +41,8 @@ package methodNames
 	add: #WAFormInputTag -> #callbackKey;
 	add: #WAOptionTag -> #callbackKey;
 	add: #WARadioButtonTag -> #callbackKey;
+	add: #WARenderContext -> #upCurrentComponent;
+	add: #WARenderContext -> #upCurrentComponent:;
 	add: #WARenderContext -> #upOverrideRendererClass;
 	add: #WARenderContext -> #upRenderWithClass:during:;
 	add: #WARequest -> #isUpValidating;
@@ -54,6 +60,7 @@ package methodNames
 	add: #WATagBrush -> #upAutoSubmit:;
 	add: #WATagBrush -> #upBefore;
 	add: #WATagBrush -> #upCache:;
+	add: #WATagBrush -> #upComponent;
 	add: #WATagBrush -> #upConfirm:;
 	add: #WATagBrush -> #upContent:;
 	add: #WATagBrush -> #upContext:;
@@ -62,6 +69,7 @@ package methodNames
 	add: #WATagBrush -> #upDismissEvent:;
 	add: #WATagBrush -> #upDuration:;
 	add: #WATagBrush -> #upFlashes:;
+	add: #WATagBrush -> #upFollow;
 	add: #WATagBrush -> #upFollow:;
 	add: #WATagBrush -> #upHistory:;
 	add: #WATagBrush -> #upInitialize;
@@ -101,6 +109,7 @@ package setPrerequisites: #(
 	'..\Seaside\Seaside\Seaside-Canvas'
 	'..\Seaside\Seaside\Seaside-Component'
 	'..\Seaside\Seaside\Seaside-Core'
+	'..\Seaside\Seaside\Seaside-Dolphin-Core'
 	'..\Seaside\Seaside\Seaside-RenderLoop'
 	'..\Seaside\Seaside\Seaside-Session'
 	'..\Seaside\Seaside\Seaside-Tools-Core'
@@ -162,12 +171,6 @@ SBSComponent subclass: #UpComponent
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
-UpComponent subclass: #UpRootComponent
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	classInstanceVariableNames: ''!
-
 WADecoration subclass: #UpDecoration
 	instanceVariableNames: ''
 	classVariableNames: ''
@@ -180,14 +183,14 @@ UpDecoration subclass: #UpLayerDecoration
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
-UpDecoration subclass: #UpLayerHostDecoration
-	instanceVariableNames: ''
+UpDecoration subclass: #UpNotificationDecoration
+	instanceVariableNames: 'div'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
-UpDecoration subclass: #UpNotificationDecoration
-	instanceVariableNames: 'div'
+UpDecoration subclass: #UpRootComponentDecoration
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -198,8 +201,14 @@ SBSHtmlCanvas subclass: #UpHtmlCanvas
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
+WARequestFilter subclass: #UpNoTabFilter
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
 WASession subclass: #UpSession
-	instanceVariableNames: 'layerHost layers notification'
+	instanceVariableNames: 'layers layerCount notification'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -217,6 +226,18 @@ WARenderPhaseContinuation subclass: #UpRenderPhaseContinuation
 	classInstanceVariableNames: ''!
 
 "Loose Methods"!
+
+!SBSLinkButtonTag methodsFor!
+
+upNoTabDefault
+
+	"Private - Default to true - assume buttons represent actions rather than followable-links"
+
+	^true! !
+
+!SBSLinkButtonTag categoriesForMethods!
+upNoTabDefault!attributes/unpoly!private! !
+!
 
 !String methodsFor!
 
@@ -244,25 +265,48 @@ showLayer: anUpLayer
 	"When this link is followed show anUpLayer with its configured component and behavior"
 
 	anUpLayer 
-		id: (self session nextLayerIdOn: canvas);
+		id: self session nextLayerId;
 		configureAnchorTag: self!
 
 upBefore
 
-	"If we are not following an explicit URL then we don't want to update the location"
-	(self upLocation isNil and: [self callbackKey notNil]) ifTrue: [self upLocation: false].
+	self callbackKey notNil ifTrue: 
+		["If we are not following an explicit URL then we don't want to update the location"
+		self upLocation isNil ifTrue: [self upLocation: false].
+		self upNoTab ifTrue: [url addField: '_notab']].
 
 	super upBefore!
 
 upLocation
 
-	^self attributeAt: 'up-location' ifAbsent: [nil]! !
+	^self attributeAt: 'up-location' ifAbsent: [nil]!
+
+upNoTab
+
+	"Pseudo attribute - set to true to restrict actions to the same tab"
+
+	^self attributeAt: 'data-up-no-tab' ifAbsent: [self upNoTabDefault]!
+
+upNoTab: aBoolean
+
+	"Pseudo attribute - set to true to restrict actions to the same tab"
+
+	self attributeAt: 'data-up-no-tab' put: aBoolean!
+
+upNoTabDefault
+
+	"Private - By default we allow links to open in new tabs"
+
+	^false! !
 
 !WAAnchorTag categoriesForMethods!
-callbackKey!attributes/unpoly!private! !
+callbackKey!accessing!private! !
 showLayer:!callbacks!public! !
-upBefore!initialization!private! !
+upBefore!configuring/unpoly!private! !
 upLocation!attributes/unpoly!private! !
+upNoTab!attributes/unpoly!public! !
+upNoTab:!attributes/unpoly!public! !
+upNoTabDefault!attributes/unpoly!private! !
 !
 
 !WABasicFormTag methodsFor!
@@ -321,7 +365,7 @@ callbackKey
 	^attributes at: 'name' ifAbsent: [nil]! !
 
 !WAFormInputTag categoriesForMethods!
-callbackKey!callbacks!public! !
+callbackKey!accessing!public! !
 !
 
 !WAOptionTag methodsFor!
@@ -331,7 +375,7 @@ callbackKey
 	^attributes at: 'value' ifAbsent: [nil]! !
 
 !WAOptionTag categoriesForMethods!
-callbackKey!attributes/unpoly!private! !
+callbackKey!accessing!private! !
 !
 
 !WARadioButtonTag methodsFor!
@@ -341,10 +385,18 @@ callbackKey
 	^attributes at: 'value' ifAbsent: [nil]! !
 
 !WARadioButtonTag categoriesForMethods!
-callbackKey!callbacks!public! !
+callbackKey!accessing!public! !
 !
 
 !WARenderContext methodsFor!
+
+upCurrentComponent
+
+	^self properties at: #upCurrentComponent!
+
+upCurrentComponent: anUpComponent
+
+	self properties at: #upCurrentComponent put: anUpComponent!
 
 upOverrideRendererClass
 
@@ -363,6 +415,8 @@ upRenderWithClass: aRendererClass during: aBlock
 			ifFalse: [properties at: #upOverrideRendererClass put: previous]]! !
 
 !WARenderContext categoriesForMethods!
+upCurrentComponent!accessing!public! !
+upCurrentComponent:!accessing!public! !
 upOverrideRendererClass!accessing!public! !
 upRenderWithClass:during:!accessing!public! !
 !
@@ -419,7 +473,7 @@ callbackKey
 	^attributes at: 'name' ifAbsent: [nil]! !
 
 !WASelectTag categoriesForMethods!
-callbackKey!callbacks!public! !
+callbackKey!accessing!public! !
 !
 
 !WATagBrush methodsFor!
@@ -462,13 +516,19 @@ upAutoSubmit: aBoolean
 
 upBefore
 
-	"Private - Unpoly-specific vairant of before. Sent immediately before writing the receiver onto the document"
+	"Private - Unpoly-specific variant of before. Sent immediately before writing the receiver onto the document"
 
 	self attributes removeKey: #_tag_ ifAbsent: []!
 
 upCache: aStringOrBoolean
 
 	self attributeAt: 'up-cache' put: aStringOrBoolean asString!
+
+upComponent
+
+	"The UpComponent which is rendering the receiver"
+
+	^canvas upCurrentComponent!
 
 upConfirm: aString
 
@@ -504,7 +564,16 @@ upFlashes: aBoolean
 
 	self attributeAt: 'up-flashes' put: aBoolean!
 
+upFollow
+
+	"By default Unpoly following is used for all applicable links and form submissions - see UpRootComponent>>updateRoot:"
+
+	^self attributeAt: 'up-follow' ifAbsent: [true]!
+
 upFollow: aBoolean
+
+	"By default Unpoly following is used for all applicable links and form submissions - see UpRootComponent>>updateRoot:
+	Only need to send this to opt out of Unpoly following"
 
 	self attributeAt: 'up-follow' put: aBoolean asString!
 
@@ -594,15 +663,16 @@ upWatchDelay: anInteger
 	self attributeAt: 'up-watch-delay' put: anInteger! !
 
 !WATagBrush categoriesForMethods!
-asUpTarget!attributes/unpoly!private! !
-beUpTarget!attributes/unpoly!public! !
-callbackKey!attributes/unpoly!private! !
+asUpTarget!configuring/unpoly!private! !
+beUpTarget!configuring/unpoly!public! !
+callbackKey!accessing!private! !
 upAcceptEvent:!attributes/unpoly!public! !
 upAlias:!attributes/unpoly!public! !
 upAnchored:!attributes/unpoly!public! !
 upAutoSubmit:!attributes/unpoly!public! !
-upBefore!attributes/unpoly!private! !
+upBefore!configuring/unpoly!private! !
 upCache:!attributes/unpoly!public! !
+upComponent!configuring/unpoly!public! !
 upConfirm:!attributes/unpoly!public! !
 upContent:!attributes/unpoly!public! !
 upContext:!attributes/unpoly!public! !
@@ -611,6 +681,7 @@ upDismissable:!attributes/unpoly!public! !
 upDismissEvent:!attributes/unpoly!public! !
 upDuration:!attributes/unpoly!public! !
 upFlashes:!attributes/unpoly!public! !
+upFollow!attributes/unpoly!public! !
 upFollow:!attributes/unpoly!public! !
 upHistory:!attributes/unpoly!public! !
 upInitialize!initialization!private! !

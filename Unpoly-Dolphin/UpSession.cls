@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 WASession subclass: #UpSession
-	instanceVariableNames: 'layerHost layers notification'
+	instanceVariableNames: 'layers layerCount notification'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -16,9 +16,7 @@ UpSession comment: ''!
 
 addLayer: aLayer
 
-	aLayer parent: self topLayer.
-
-	^self layers addLast: aLayer!
+	^self layers add: aLayer!
 
 createContinuationCache
 
@@ -38,19 +36,10 @@ initialize
 
 	super initialize.
 
-	layers := OrderedCollection new!
+	layers := OrderedCollection new.
+	layerCount := 0!
 
-layerHost
-
-	"The UpComponent which hosts new layers"
-
-	^layerHost!
-
-layerHost: anUpComponent
-
-	"The UpComponent which hosts new layers"
-
-	layerHost := anUpComponent!
+initializeFilters	super initializeFilters.	self addFilter: UpNoTabFilter new!
 
 layers
 
@@ -60,16 +49,9 @@ layerWithID: aString
 
 	^self layers detect: [ :each | each id = aString]!
 
-nextLayerIdOn: html
+nextLayerId
 
-	| id |
-
-	"Skip the 'id' part"
-	id := html nextId allButFirst: 2.
-
-	^self layers isEmpty 
-		ifTrue: ['layer', id]
-		ifFalse: [self layers last id, '.', id]!
+	^'layer', (layerCount := layerCount + 1) asString!
 
 notification: anObject
 
@@ -102,14 +84,6 @@ removeLayer: aLayer
 
 	^self layers remove: aLayer!
 
-topLayer
-
-	"A stack"
-
-	^self layers isEmpty 
-		ifTrue: [nil]
-		ifFalse: [self layers last]!
-
 unknownRequest
 
 	"Force a full-page refresh"
@@ -122,17 +96,15 @@ unknownRequest
 addLayer:!add/remove!public! !
 createContinuationCache!initialization!public! !
 initialize!initialization!public! !
-layerHost!accessing!public! !
-layerHost:!accessing!public! !
+initializeFilters!initialization!public! !
 layers!accessing!public! !
 layerWithID:!accessing!public! !
-nextLayerIdOn:!accessing!private! !
+nextLayerId!accessing!public! !
 notification:!accessing!public! !
 onLayerClosed:!event handling!public! !
 onLayerOpened:!event handling!public! !
 popNotification!accessing!private! !
 removeLayer:!add/remove!public! !
-topLayer!accessing!public! !
 unknownRequest!handling!public! !
 !
 

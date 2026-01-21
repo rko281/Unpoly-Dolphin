@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
-UpRootComponent subclass: #UpExamplesBrowser
-	instanceVariableNames: 'currentExample examples'
+UpComponent subclass: #UpExamplesBrowser
+	instanceVariableNames: 'currentExample'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -21,7 +21,17 @@ acceptToolbar
 	rq := self requestContext request.
 	self hasExampleDelay: (rq postFields at: 'extraLatency' ifAbsent: ['off']) = 'on'!
 
-children	^Array with: currentExample!
+children	^self currentExample
+		ifNil: [#()]
+		ifNotNil: [ :child | Array with: child]!
+
+currentExample
+
+	^currentExample contents!
+
+currentExample: anUpComponent
+
+	currentExample contents: anUpComponent!
 
 defaultPath
 	
@@ -37,8 +47,8 @@ initialize
 
 	(self addDecoration: UpNotificationDecoration new) anchorRight.
 			
-	examples := IdentityDictionary new.
-	self exampleClasses do: [ :each | each initializeSession: self session]!
+	self exampleClasses do: [ :each | each initializeSession: self session].
+	currentExample := WAValueHolder new!
 
 initialRequest: request
 
@@ -56,7 +66,7 @@ initialRequest: request
 
 navigateToExampleClass: aClass
 
-	currentExample := (examples at: aClass ifAbsentPut: [aClass new])!
+	self currentExample: aClass new!
 
 newSession
 
@@ -80,7 +90,7 @@ renderContentOn: html
 
 renderExampleOn: html
 
-	currentExample ifNotNil: [html render: currentExample]!
+	self currentExample ifNotNil: [ :child | html render: child]!
 
 renderNavigationBarOn: html	html navigationBar 
 		expandMiddle;
@@ -89,7 +99,6 @@ renderNavigationBarOn: html	html navigationBar
 		class: 'fixed-top';		with: 
 			[html navigationBarBrand
 				url: (WAUrl absolute: self class contextRoot);
-				upFollow: true;
 				with: 'Unpoly Demo'.
 			html navigationBarNavigation:
 				[self exampleClasses do: 
@@ -143,11 +152,13 @@ renderToolbarOn: html
 									on: #hasExampleDelay of: self; 
 									with: 'Extra server delay']]]!
 
-style	^currentExample style!
+states
 
-topLevelIdentifier
+	^{currentExample}!
 
-	^'.example-browser'!
+style	^self currentExample
+		ifNil: [super style] 
+		ifNotNil: [ :child | child style]!
 
 updateRoot: htmlRoot
 
@@ -158,29 +169,32 @@ updateRoot: htmlRoot
 !UpExamplesBrowser categoriesForMethods!
 acceptToolbar!public!rendering! !
 children!accessing!public! !
+currentExample!accessing!public! !
+currentExample:!accessing!public! !
 defaultPath!accessing!public! !
 exampleClasses!accessing!public! !
 initialize!initialization!public! !
 initialRequest:!hooks!public! !
-navigateToExampleClass:!accessing!public! !
+navigateToExampleClass:!operations!public! !
 newSession!operations!public! !
 renderContentOn:!public!rendering! !
 renderExampleOn:!public!rendering! !
 renderNavigationBarOn:!public!rendering! !
 renderToolbarOn:!public!rendering! !
+states!accessing!public! !
 style!hooks!public! !
-topLevelIdentifier!accessing!public! !
 updateRoot:!public!updating! !
 !
 
 !UpExamplesBrowser class methodsFor!
 
+canBeRoot
+
+	^true!
+
 contextRoot	^'unpoly'!
 
 initialize	self register!
-
-openBrowser
-	WebBrowser openOn: 'http://localhost:8080/', self contextRoot!
 
 register
 
@@ -189,9 +203,9 @@ register
 		yourself! !
 
 !UpExamplesBrowser class categoriesForMethods!
+canBeRoot!class initialization!public! !
 contextRoot!accessing!public! !
 initialize!class initialization!public! !
-openBrowser!public!utilities! !
 register!class initialization!public! !
 !
 

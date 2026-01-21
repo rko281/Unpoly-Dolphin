@@ -24,6 +24,7 @@ renderContentOn: html
 		html definitionTerm marginBottom: 1; with: 'Company'.
 		html definitionData marginBottom: 2; with: 
 			[html anchor
+				upNoTab: true;
 				upPlaceholder: UpCompanyPresenter asPlaceholder;
 				callback: [self viewCompany];
 				with: self model company name].

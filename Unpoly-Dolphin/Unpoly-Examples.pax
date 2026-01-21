@@ -33,7 +33,6 @@ package setPrerequisites: #(
 	'..\Grease\Grease-Core'
 	'..\Seaside\Seaside\Seaside-Component'
 	'..\Seaside\Seaside\Seaside-Core'
-	'..\Seaside\Seaside\Seaside-Dolphin-Core'
 	'..\Seaside\Seaside\Seaside-Examples'
 	'Unpoly-Core').
 
@@ -49,6 +48,12 @@ SBSFileLibrary subclass: #UpExamplesLibrary
 
 UpComponent subclass: #UpExample
 	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+UpComponent subclass: #UpExamplesBrowser
+	instanceVariableNames: 'currentExample'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -73,12 +78,6 @@ UpComponentExample subclass: #UpCounterExample
 
 UpComponentExample subclass: #UpMultiCounterExample
 	instanceVariableNames: 'counters'
-	classVariableNames: ''
-	poolDictionaries: ''
-	classInstanceVariableNames: ''!
-
-UpRootComponent subclass: #UpExamplesBrowser
-	instanceVariableNames: 'currentExample examples'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!

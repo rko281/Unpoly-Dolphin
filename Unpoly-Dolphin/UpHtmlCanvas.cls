@@ -24,6 +24,10 @@ text: aString
 
 	self document isRendering ifTrue: [super text: aString]!
 
+upCurrentComponent
+
+	^context upCurrentComponent!
+
 upMain: aBlock
 	self div 
 		upMain: true;
@@ -32,6 +36,7 @@ upMain: aBlock
 !UpHtmlCanvas categoriesForMethods!
 brush:!accessing!public! !
 text:!public!tags! !
+upCurrentComponent!accessing!public! !
 upMain:!public!tags! !
 !
 
