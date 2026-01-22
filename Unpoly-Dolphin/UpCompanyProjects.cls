@@ -64,7 +64,7 @@ renderHeaderOn: html
 				[html linkButton
 					bePrimary;
 					beSmall;
-					showLayer: self newModelEditorLayer;
+					showLayer: self newModelEditorLayer in: self;
 					with: 'Add ', self modelClass description]]!
 
 renderPlaceholdersOn: html

@@ -70,7 +70,6 @@ configureAnchorTag: aWAAnchorTag
 	self placeholder ifNotNil: [ :upPlaceholder | aWAAnchorTag upPlaceholder: upPlaceholder].
 	self context isEmpty ifFalse: [aWAAnchorTag upContext: self context asJson].
 
-	self parent: aWAAnchorTag upComponent.
 	aWAAnchorTag callback: [self show]!
 
 containing: anUpComponentOrBlock

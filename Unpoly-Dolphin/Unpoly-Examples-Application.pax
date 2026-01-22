@@ -113,7 +113,7 @@ UpExampleEditor subclass: #UpProjectEditor
 	classInstanceVariableNames: ''!
 
 UpExamplePresenter subclass: #UpCompanyPresenter
-	instanceVariableNames: ''
+	instanceVariableNames: 'companyProjects'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!

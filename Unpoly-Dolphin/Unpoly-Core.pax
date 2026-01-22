@@ -27,7 +27,7 @@ package methodNames
 	add: #SBSLinkButtonTag -> #upNoTabDefault;
 	add: #String -> #asUpTarget;
 	add: #WAAnchorTag -> #callbackKey;
-	add: #WAAnchorTag -> #showLayer:;
+	add: #WAAnchorTag -> #showLayer:in:;
 	add: #WAAnchorTag -> #upBefore;
 	add: #WAAnchorTag -> #upLocation;
 	add: #WAAnchorTag -> #upNoTab;
@@ -60,7 +60,6 @@ package methodNames
 	add: #WATagBrush -> #upAutoSubmit:;
 	add: #WATagBrush -> #upBefore;
 	add: #WATagBrush -> #upCache:;
-	add: #WATagBrush -> #upComponent;
 	add: #WATagBrush -> #upConfirm:;
 	add: #WATagBrush -> #upContent:;
 	add: #WATagBrush -> #upContext:;
@@ -166,7 +165,7 @@ WACookieOnlySessionTrackingStrategy subclass: #UpSessionTrackingStrategy
 	classInstanceVariableNames: ''!
 
 SBSComponent subclass: #UpComponent
-	instanceVariableNames: ''
+	instanceVariableNames: 'parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -260,12 +259,13 @@ callbackKey
 
 	^nil!
 
-showLayer: anUpLayer
+showLayer: anUpLayer in: anUpComponent
 
 	"When this link is followed show anUpLayer with its configured component and behavior"
 
 	anUpLayer 
 		id: self session nextLayerId;
+		parent: anUpComponent;
 		configureAnchorTag: self!
 
 upBefore
@@ -301,7 +301,7 @@ upNoTabDefault
 
 !WAAnchorTag categoriesForMethods!
 callbackKey!accessing!private! !
-showLayer:!callbacks!public! !
+showLayer:in:!callbacks!public! !
 upBefore!configuring/unpoly!private! !
 upLocation!attributes/unpoly!private! !
 upNoTab!attributes/unpoly!public! !
@@ -392,7 +392,7 @@ callbackKey!accessing!public! !
 
 upCurrentComponent
 
-	^self properties at: #upCurrentComponent!
+	^self properties at: #upCurrentComponent ifAbsent: [nil]!
 
 upCurrentComponent: anUpComponent
 
@@ -523,12 +523,6 @@ upBefore
 upCache: aStringOrBoolean
 
 	self attributeAt: 'up-cache' put: aStringOrBoolean asString!
-
-upComponent
-
-	"The UpComponent which is rendering the receiver"
-
-	^canvas upCurrentComponent!
 
 upConfirm: aString
 
@@ -672,7 +666,6 @@ upAnchored:!attributes/unpoly!public! !
 upAutoSubmit:!attributes/unpoly!public! !
 upBefore!configuring/unpoly!private! !
 upCache:!attributes/unpoly!public! !
-upComponent!configuring/unpoly!public! !
 upConfirm:!attributes/unpoly!public! !
 upContent:!attributes/unpoly!public! !
 upContext:!attributes/unpoly!public! !

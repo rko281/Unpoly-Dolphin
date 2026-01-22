@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 SBSComponent subclass: #UpComponent
-	instanceVariableNames: ''
+	instanceVariableNames: 'parent'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -40,7 +40,9 @@ isRoot
 
 layer
 
-	^self upLayerDecoration ifNotNil: [ :layerDecoration | layerDecoration layer]!
+	"Answer the UpLayer in which the receiver exists or nil if none"
+
+	^self layerDecoration ifNotNil: [ :layerDecoration | layerDecoration layer]!
 
 layerContextAt: aSymbol
 
@@ -54,13 +56,22 @@ layerContextAt: aSymbol ifAbsent: aBlock
 
 layerDecoration
 
-	^self decoration isDecoration
-		ifTrue: [self decoration upLayerDecoration]
-		ifFalse: [nil]!
+	"Answer the UpLayerDecoration wrapping the receiver (either directly or in its parent hierarchy) or nil if none"
+
+	^self decoration upLayerDecoration ifNil: 
+		[parent isNil ifFalse: [parent layerDecoration]]!
 
 rendererClass
 
 	^UpHtmlCanvas!
+
+renderWithContext: aRenderContext
+
+	"UpComponents need to traverse their parents for later detection"
+
+	parent := aRenderContext upCurrentComponent.
+	aRenderContext upCurrentComponent: self.
+	[super renderWithContext: aRenderContext] ensure: [aRenderContext upCurrentComponent: parent]!
 
 shouldDisableUnpolyCaching
 
@@ -84,17 +95,11 @@ show: aComponent onAnswer: aBlock delegation: aDelegation
 
 	^super show: aComponent onAnswer: aBlock delegation: aDelegation!
 
-updateRoot: htmlRoot
-
-	super updateRoot: htmlRoot.
-
-	htmlRoot context upCurrentComponent: self!
-
 upLayerDecoration
 
-	^self decoration ~~ self
-		ifTrue: [self decoration upLayerDecoration]
-		ifFalse: [nil]! !
+	"Polymorphic with WADecoration"
+
+	^nil! !
 
 !UpComponent categoriesForMethods!
 expiredSessionUrl!accessing!public! !
@@ -106,10 +111,10 @@ layerContextAt:!accessing!public! !
 layerContextAt:ifAbsent:!accessing!public! !
 layerDecoration!accessing!public! !
 rendererClass!public!rendering! !
+renderWithContext:!private!rendering! !
 shouldDisableUnpolyCaching!public!testing! !
 show:onAnswer:delegation:!delegation!public! !
-updateRoot:!public!updating! !
-upLayerDecoration!accessing!public! !
+upLayerDecoration!accessing!private! !
 !
 
 !UpComponent class methodsFor!

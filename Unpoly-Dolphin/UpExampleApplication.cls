@@ -117,14 +117,14 @@ renderHeaderOn: html
 			html column smallVariableWidth with: 
 				[html linkButton
 					bePrimary;
-					showLayer: self newModelEditorLayer;
+					showLayer: self newModelEditorLayer in: self;
 					with: 'New ', self modelClass description]]!
 
 renderModel: aModel on: html
 
 	html tableData: 
 		[html anchor
-			showLayer: (self presenterLayerFor: aModel);
+			showLayer: (self presenterLayerFor: aModel) in: self;
 			with: aModel name].
 
 	self renderAdditionalColumnsFor: aModel on: html!

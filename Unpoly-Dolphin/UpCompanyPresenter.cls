@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 UpExamplePresenter subclass: #UpCompanyPresenter
-	instanceVariableNames: ''
+	instanceVariableNames: 'companyProjects'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -13,6 +13,14 @@ UpCompanyPresenter comment: ''!
 !UpCompanyPresenter categoriesForClass!Component! !
 
 !UpCompanyPresenter methodsFor!
+
+children
+
+	^super children, {self companyProjects}!
+
+companyProjects
+
+	^companyProjects ifNil: [companyProjects := UpCompanyProjects on: self model]!
 
 renderContentOn: html
 	
@@ -29,6 +37,8 @@ renderContentOn: html
 		with: [html render: (UpCompanyProjects on: self model)]! !
 
 !UpCompanyPresenter categoriesForMethods!
+children!accessing!public! !
+companyProjects!accessing!public! !
 renderContentOn:!public!rendering! !
 !
 

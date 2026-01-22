@@ -88,7 +88,7 @@ renderFormFieldsOn: html
 				html linkButton
 					beOutline;
 					beSecondary;
-					showLayer: self nameSuggester;
+					showLayer: self nameSuggester in: self;
 					with: 'Suggest Name']]
 		for: #name
 		on: html.
@@ -107,7 +107,7 @@ renderFormFieldsOn: html
 					html linkButton
 						beOutline;
 						beSecondary;
-						showLayer: self newCompanyLayer;
+						showLayer: self newCompanyLayer in: self;
 						with: 'New Company']]
 			for: #company
 			on: html].
