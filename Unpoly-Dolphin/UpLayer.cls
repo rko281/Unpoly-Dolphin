@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 WAObject subclass: #UpLayer
-	instanceVariableNames: 'id mode componentBlock component context parent placeholder onClosed onClosedReload upDismissable'
+	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder onClosed onClosedReload upDismissable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -38,8 +38,7 @@ component: anObject
 	"The component to be shown in this layer.
 	Either set directly or generated from the componentBlock each time the layer is opened"
 
-	component := anObject.
-	component addDecoration: (UpLayerDecoration new layer: self)!
+	component := anObject!
 
 componentBlock
 
@@ -55,7 +54,9 @@ componentBlock: aBlock
 
 	componentBlock := aBlock!
 
-configureAnchorTag: aWAAnchorTag
+configureAnchorTag: aWAAnchorTag in: anUpComponent
+
+	parentComponent := anUpComponent.
 
 	aWAAnchorTag
 		upLocation: false;
@@ -97,15 +98,15 @@ contextAt: aSymbol
 contextAt: aSymbol ifAbsent: aBlock
 
 	^self context at: aSymbol ifAbsent: 
-		[self parentLayer
-			ifNil: [aBlock value]
-			ifNotNil: [ :parentLayer | parentLayer contextAt: aSymbol ifAbsent: aBlock]]!
+		[parentLayer isNil
+			ifTrue: [aBlock value]
+			ifFalse: [parentLayer contextAt: aSymbol ifAbsent: aBlock]]!
 
 contextAt: aSymbol ifPresent: aBlock
 
 	self context at: aSymbol ifPresent: [ :val | ^aBlock value: val].
 
-	^self parentLayer ifNotNil: [ :parentLayer | parentLayer contextAt: aSymbol ifPresent: aBlock]!
+	^parentLayer isNil ifFalse: [parentLayer contextAt: aSymbol ifPresent: aBlock]!
 
 contextAt: aSymbol put: aStringOrNil
 
@@ -115,14 +116,14 @@ contextAt: aSymbol put: aStringOrNil
 
 id
 
-	^id ifNil: [self contextAt: #layerID ifAbsent: [nil]]!
+	^id ifNil: [self contextAt: #layerId ifAbsent: [nil]]!
 
 id: anObject
 
 	id := anObject.
 
 	"Also store in the context"
-	self contextAt: #layerID put: anObject!
+	self contextAt: #layerId put: anObject!
 
 initialize
 
@@ -195,6 +196,7 @@ onErrorSnippet
 
 onLayerClosed: anUpEvent
 
+	parentLayer := nil.
 	self component answer: anUpEvent.
 
 	anUpEvent respond: self onClosedReload!
@@ -209,16 +211,6 @@ onOpenedSnippet
 	This calls the layer close handler defined in UpLayerHostDecoration - this notifies the server which in turn sets the current layer id"
 
 	^'upLayerOpened(event)'!
-
-parent
-	^parent!
-
-parent: anObject
-	parent := anObject!
-
-parentLayer
-
-	^self parent layer!
 
 placeholder
 
@@ -241,12 +233,13 @@ show
 
 	componentBlock isNil ifFalse: [self component: componentBlock value].
 
-	self session addLayer: self.
+	parentLayer := self session currentLayer.
+	self session addLayer: self; currentLayer: self.
 
 	self topComponent call: component onAnswer: 
 		[ :answer || closeEvent | 
 		"If #answer: was invoked in response to the layer being dismissed (e.g. user clicked X button) then answer will be the actual dismissal event.
-		If newComponent invoked #answer: itself then we must trigger an event to close the layer"
+		If newComponent invoked #answer: itself then we must trigger an event on the client to close the layer"
 		(answer isKindOf: UpEvent)
 		ifTrue: 
 			[closeEvent := answer]
@@ -262,9 +255,9 @@ show
 
 topComponent
 
-	^self parentLayer
-		ifNil: [self parent]
-		ifNotNil: [ :parentLayer | parentLayer topComponent]!
+	^parentLayer isNil
+		ifTrue: [parentComponent]
+		ifFalse: [parentLayer topComponent]!
 
 upDismissable
 
@@ -298,7 +291,7 @@ component!accessing!public! !
 component:!accessing!public! !
 componentBlock!accessing!private! !
 componentBlock:!accessing!private! !
-configureAnchorTag:!operations!private! !
+configureAnchorTag:in:!operations!private! !
 containing:!initialization!public! !
 context!accessing!private! !
 context:!accessing!private! !
@@ -320,9 +313,6 @@ onErrorSnippet!constants!public! !
 onLayerClosed:!event handling!public! !
 onLayerOpened:!event handling!public! !
 onOpenedSnippet!constants!public! !
-parent!accessing!public! !
-parent:!accessing!public! !
-parentLayer!accessing!public! !
 placeholder!accessing!public! !
 placeholder:!accessing!public! !
 show!operations!public! !

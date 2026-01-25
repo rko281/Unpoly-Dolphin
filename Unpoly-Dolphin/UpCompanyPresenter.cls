@@ -34,7 +34,7 @@ renderContentOn: html
 
 	html div 
 		id: 'projects';
-		with: [html render: (UpCompanyProjects on: self model)]! !
+		with: [html render: self companyProjects]! !
 
 !UpCompanyPresenter categoriesForMethods!
 children!accessing!public! !

@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 SBSComponent subclass: #UpComponent
-	instanceVariableNames: 'parent'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -27,10 +27,6 @@ initialize
 
 	self isRoot ifTrue: [self addDecoration: UpRootComponentDecoration new]!
 
-isInLayer
-
-	^self layerDecoration notNil!
-
 isRoot
 
 	"Am I a root application?
@@ -38,40 +34,19 @@ isRoot
 
 	^self class canBeRoot!
 
-layer
-
-	"Answer the UpLayer in which the receiver exists or nil if none"
-
-	^self layerDecoration ifNotNil: [ :layerDecoration | layerDecoration layer]!
-
 layerContextAt: aSymbol
 
 	^self layerContextAt: aSymbol ifAbsent: [self error: 'not found']!
 
 layerContextAt: aSymbol ifAbsent: aBlock
 
-	^self layer 
+	^self session currentLayer
 		ifNil: [aBlock value]
 		ifNotNil: [ :layer | layer contextAt: aSymbol ifAbsent: aBlock]!
-
-layerDecoration
-
-	"Answer the UpLayerDecoration wrapping the receiver (either directly or in its parent hierarchy) or nil if none"
-
-	^self decoration upLayerDecoration ifNil: 
-		[parent isNil ifFalse: [parent layerDecoration]]!
 
 rendererClass
 
 	^UpHtmlCanvas!
-
-renderWithContext: aRenderContext
-
-	"UpComponents need to traverse their parents for later detection"
-
-	parent := aRenderContext upCurrentComponent.
-	aRenderContext upCurrentComponent: self.
-	[super renderWithContext: aRenderContext] ensure: [aRenderContext upCurrentComponent: parent]!
 
 shouldDisableUnpolyCaching
 
@@ -90,10 +65,17 @@ shouldDisableUnpolyCaching
 
 	^true!
 
-show: aComponent onAnswer: aBlock delegation: aDelegation
-	self layer ifNotNil: [ :layer | layer component: aComponent].
+show: aComponent onAnswer: aBlock
 
-	^super show: aComponent onAnswer: aBlock delegation: aDelegation!
+	self session currentLayer ifNotNil: [ :layer | layer component: aComponent].
+
+	^super show: aComponent onAnswer: aBlock!
+
+states
+
+	"Include the current layer state. Subclass implementations must super send this message"
+
+	^{self session currentLayerState}!
 
 upLayerDecoration
 
@@ -104,16 +86,13 @@ upLayerDecoration
 !UpComponent categoriesForMethods!
 expiredSessionUrl!accessing!public! !
 initialize!initialization!public! !
-isInLayer!public!testing! !
 isRoot!public!testing! !
-layer!accessing!public! !
 layerContextAt:!accessing!public! !
 layerContextAt:ifAbsent:!accessing!public! !
-layerDecoration!accessing!public! !
 rendererClass!public!rendering! !
-renderWithContext:!private!rendering! !
 shouldDisableUnpolyCaching!public!testing! !
-show:onAnswer:delegation:!delegation!public! !
+show:onAnswer:!delegation!public! !
+states!accessing!public! !
 upLayerDecoration!accessing!private! !
 !
 

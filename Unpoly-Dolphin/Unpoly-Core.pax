@@ -13,7 +13,6 @@ package classNames
 	add: #UpHtmlDocument;
 	add: #UpInitialRenderLoopContinuation;
 	add: #UpLayer;
-	add: #UpLayerDecoration;
 	add: #UpNoTabFilter;
 	add: #UpNotificationDecoration;
 	add: #UpRenderPhaseContinuation;
@@ -41,11 +40,10 @@ package methodNames
 	add: #WAFormInputTag -> #callbackKey;
 	add: #WAOptionTag -> #callbackKey;
 	add: #WARadioButtonTag -> #callbackKey;
-	add: #WARenderContext -> #upCurrentComponent;
-	add: #WARenderContext -> #upCurrentComponent:;
 	add: #WARenderContext -> #upOverrideRendererClass;
 	add: #WARenderContext -> #upRenderWithClass:during:;
 	add: #WARequest -> #isUpValidating;
+	add: #WARequest -> #upContext;
 	add: #WARequest -> #upTarget;
 	add: #WARequest -> #upValidate;
 	add: #WAResponse -> #upEvent:;
@@ -112,6 +110,7 @@ package setPrerequisites: #(
 	'..\Seaside\Seaside\Seaside-RenderLoop'
 	'..\Seaside\Seaside\Seaside-Session'
 	'..\Seaside\Seaside\Seaside-Tools-Core'
+	'..\Core\Contributions\svenc\STON\STON-Core'
 	'..\Core\Object Arts\Dolphin\ActiveX\Shell\Windows Shell').
 
 package setManualPrerequisites: #(
@@ -129,7 +128,7 @@ WAObject subclass: #UpEvent
 	classInstanceVariableNames: ''!
 
 WAObject subclass: #UpLayer
-	instanceVariableNames: 'id mode componentBlock component context parent placeholder onClosed onClosedReload upDismissable'
+	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder onClosed onClosedReload upDismissable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -165,19 +164,13 @@ WACookieOnlySessionTrackingStrategy subclass: #UpSessionTrackingStrategy
 	classInstanceVariableNames: ''!
 
 SBSComponent subclass: #UpComponent
-	instanceVariableNames: 'parent'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
 WADecoration subclass: #UpDecoration
 	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	classInstanceVariableNames: ''!
-
-UpDecoration subclass: #UpLayerDecoration
-	instanceVariableNames: 'layer'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -207,7 +200,7 @@ WARequestFilter subclass: #UpNoTabFilter
 	classInstanceVariableNames: ''!
 
 WASession subclass: #UpSession
-	instanceVariableNames: 'layers layerCount notification'
+	instanceVariableNames: 'layers layerCount currentLayer notification'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -265,8 +258,7 @@ showLayer: anUpLayer in: anUpComponent
 
 	anUpLayer 
 		id: self session nextLayerId;
-		parent: anUpComponent;
-		configureAnchorTag: self!
+		configureAnchorTag: self in: anUpComponent!
 
 upBefore
 
@@ -390,14 +382,6 @@ callbackKey!accessing!public! !
 
 !WARenderContext methodsFor!
 
-upCurrentComponent
-
-	^self properties at: #upCurrentComponent ifAbsent: [nil]!
-
-upCurrentComponent: anUpComponent
-
-	self properties at: #upCurrentComponent put: anUpComponent!
-
 upOverrideRendererClass
 
 	^self properties at: #upOverrideRendererClass ifAbsent: [nil]!
@@ -415,8 +399,6 @@ upRenderWithClass: aRendererClass during: aBlock
 			ifFalse: [properties at: #upOverrideRendererClass put: previous]]! !
 
 !WARenderContext categoriesForMethods!
-upCurrentComponent!accessing!public! !
-upCurrentComponent:!accessing!public! !
 upOverrideRendererClass!accessing!public! !
 upRenderWithClass:during:!accessing!public! !
 !
@@ -426,6 +408,14 @@ upRenderWithClass:during:!accessing!public! !
 isUpValidating
 
 	^self upValidate notNil!
+
+upContext
+
+	^(self headerAt: 'X-Up-Context' ifAbsent: [nil]) ifNotNil: 
+		[ :ctx | 
+		ctx size > 2 "Ignore {}" 
+			ifTrue: [STON fromString: ctx]
+			ifFalse: [##(Dictionary new)]]!
 
 upTarget
 
@@ -437,6 +427,7 @@ upValidate
 
 !WARequest categoriesForMethods!
 isUpValidating!accessing/unpoly!private! !
+upContext!accessing/unpoly!private! !
 upTarget!accessing/unpoly!private! !
 upValidate!accessing/unpoly!private! !
 !

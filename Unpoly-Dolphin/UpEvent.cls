@@ -55,20 +55,20 @@ isDismissal
 layer
 
 	^layer ifNil: 
-		[self propertyAt: #layerID ifPresent: 
+		[self propertyAt: #layerId ifPresent: 
 			[ :id | 
-			layer := self session layerWithID: id]]!
+			layer := self session layerWithId: id]]!
 
 layer: anUpLayerOrNil
 
 	(layer := anUpLayerOrNil) isNil
-		ifTrue: [self propertyAt: #layer put: nil; propertyAt: #layerID put: nil]
-		ifFalse: [self propertyAt: #layer put: 'current' "we only support events on the current layer"; propertyAt: #layerID put: layer id]!
+		ifTrue: [self propertyAt: #layer put: nil; propertyAt: #layerId put: nil]
+		ifFalse: [self propertyAt: #layer put: 'current' "we only support events on the current layer"; propertyAt: #layerId put: layer id]!
 
-layerID
+layerId
 
 	^layer isNil 
-		ifTrue: [self propertyAt: #layerID ifAbsent: [nil]]
+		ifTrue: [self propertyAt: #layerId ifAbsent: [nil]]
 		ifFalse: [layer id]!
 
 parseResponseString: aString
@@ -193,7 +193,7 @@ initialize!initialize/release!public! !
 isDismissal!public!testing! !
 layer!accessing!public! !
 layer:!accessing!public! !
-layerID!accessing!public! !
+layerId!accessing!public! !
 parseResponseString:!parsing!private! !
 printOn:!printing!public! !
 properties!accessing!private! !

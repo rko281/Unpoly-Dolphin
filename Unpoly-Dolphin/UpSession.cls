@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 WASession subclass: #UpSession
-	instanceVariableNames: 'layers layerCount notification'
+	instanceVariableNames: 'layers layerCount currentLayer notification'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -32,10 +32,33 @@ createContinuationCache
 		maximumRelativeAge: 0
 		overflowAction: WAHashCache removeRelativeOldest!
 
+currentLayer
+
+	^currentLayer contents!
+
+currentLayer: anUpLayerOrNil
+
+	currentLayer contents: anUpLayerOrNil!
+
+currentLayerState
+
+	^currentLayer!
+
+handleFiltered: aRequestContext 
+
+	"Select the requested layer"
+	aRequestContext request isGet ifTrue: 
+		[(aRequestContext request upContext ifNotNil: [ :ctx | ctx at: 'layerId' ifAbsent: [nil]])
+			ifNil: [self currentLayer: nil]
+			ifNotNil: [ :layerId | self currentLayer: (self layerWithId: layerId)]].
+
+	^super handleFiltered: aRequestContext !
+
 initialize
 
 	super initialize.
 
+	currentLayer := WAValueHolder new.
 	layers := OrderedCollection new.
 	layerCount := 0!
 
@@ -45,9 +68,9 @@ layers
 
 	^layers!
 
-layerWithID: aString
+layerWithId: aString
 
-	^self layers detect: [ :each | each id = aString]!
+	^self layers detect: [ :each | each id = aString] ifNone: [nil]!
 
 nextLayerId
 
@@ -95,10 +118,14 @@ unknownRequest
 !UpSession categoriesForMethods!
 addLayer:!add/remove!public! !
 createContinuationCache!initialization!public! !
+currentLayer!accessing!public! !
+currentLayer:!accessing!public! !
+currentLayerState!public! !
+handleFiltered:!handling!public! !
 initialize!initialization!public! !
 initializeFilters!initialization!public! !
 layers!accessing!public! !
-layerWithID:!accessing!public! !
+layerWithId:!accessing!public! !
 nextLayerId!accessing!public! !
 notification:!accessing!public! !
 onLayerClosed:!event handling!public! !

@@ -154,7 +154,7 @@ renderToolbarOn: html
 
 states
 
-	^{currentExample}!
+	^super states, {currentExample}!
 
 style	^self currentExample
 		ifNil: [super style] 
