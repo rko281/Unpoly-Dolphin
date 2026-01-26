@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 WAObject subclass: #UpLayer
-	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder onClosed onClosedReload upDismissable'
+	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder isOpen onClosed onClosedReload upDismissable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -13,6 +13,12 @@ UpLayer comment: ''!
 !UpLayer categoriesForClass!Unclassified! !
 
 !UpLayer methodsFor!
+
+_onLayerClosed: anUpEvent
+
+	isOpen := false.
+	parentLayer := nil. 
+	onClosed isNil ifFalse: [onClosed value: anUpEvent]!
 
 beModal
 
@@ -129,7 +135,12 @@ initialize
 
 	super initialize.
 
-	context := Dictionary new!
+	context := Dictionary new.
+	isOpen := false!
+
+isOpen
+
+	^isOpen!
 
 mode
 
@@ -152,6 +163,16 @@ mode: aSymbol
 		#cover	An overlay covering the entire screen"
 
 	mode := aSymbol!
+
+onAnswer: aBlock
+
+	"A Block to be evaluated when the receiver's component answers.
+	The single argument is the answer: argument.
+
+	If the layer is dismissed no answer is sent, the same as if the component was in a tab which was closed.
+	To additionally respond to dismissals (or otherwise interrogate the close event or layer) use onClosed: "
+
+	self onClosed: [ :closeEvent | closeEvent isDismissal ifFalse: [aBlock value: closeEvent value]]!
 
 onClosed
 
@@ -196,8 +217,7 @@ onErrorSnippet
 
 onLayerClosed: anUpEvent
 
-	parentLayer := nil.
-	self component answer: anUpEvent.
+	self isOpen ifTrue: [self _onLayerClosed: anUpEvent].
 
 	anUpEvent respond: self onClosedReload!
 
@@ -228,30 +248,27 @@ placeholder: aString
 
 show
 
-	"Show this layer with the configured component.
-	When the layer is closed evaluate resultBlock (if not nil) with the closing event"
+	"Show this layer with the configured component. 
+	When the component answers close the layer on the client"
 
 	componentBlock isNil ifFalse: [self component: componentBlock value].
 
 	parentLayer := self session currentLayer.
 	self session addLayer: self; currentLayer: self.
+	isOpen := true.
 
 	self topComponent call: component onAnswer: 
-		[ :answer || closeEvent | 
-		"If #answer: was invoked in response to the layer being dismissed (e.g. user clicked X button) then answer will be the actual dismissal event.
-		If newComponent invoked #answer: itself then we must trigger an event on the client to close the layer"
-		(answer isKindOf: UpEvent)
-		ifTrue: 
-			[closeEvent := answer]
-		ifFalse: 
-			[closeEvent := 
-				(UpEvent type: self closeEventType)
-					layer: self;
-					value: answer;
-					yourself].
+		[ :answer || closeEvent |
+		closeEvent := 
+			(UpEvent type: self closeEventType)
+				layer: self;
+				value: answer;
+				yourself.
 
-		onClosed isNil ifFalse: [onClosed value: closeEvent].
-		closeEvent isDismissal ifFalse: [self requestContext respond: [ :response | response upEvent: closeEvent]]]!
+		self _onLayerClosed: closeEvent.
+
+		"Raise the event on the client to close the layer"
+		self requestContext respond: [ :response | response upEvent: closeEvent]]!
 
 topComponent
 
@@ -284,6 +301,7 @@ upDismissable: aStringOrBoolean
 	upDismissable := aStringOrBoolean! !
 
 !UpLayer categoriesForMethods!
+_onLayerClosed:!event handling!private! !
 beModal!initialization!public! !
 bePopup!initialization!public! !
 closeEventType!constants!private! !
@@ -302,8 +320,10 @@ contextAt:put:!accessing!public! !
 id!accessing!public! !
 id:!accessing!public! !
 initialize!initialization!public! !
+isOpen!public!testing! !
 mode!accessing!private! !
 mode:!accessing!private! !
+onAnswer:!accessing!public! !
 onClosed!accessing!public! !
 onClosed:!accessing!public! !
 onClosedReload!accessing!public! !

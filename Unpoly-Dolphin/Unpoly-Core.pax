@@ -128,7 +128,7 @@ WAObject subclass: #UpEvent
 	classInstanceVariableNames: ''!
 
 WAObject subclass: #UpLayer
-	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder onClosed onClosedReload upDismissable'
+	instanceVariableNames: 'id mode context componentBlock component parentComponent parentLayer placeholder isOpen onClosed onClosedReload upDismissable'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!

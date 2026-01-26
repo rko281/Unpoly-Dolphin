@@ -43,7 +43,7 @@ nameSuggester
 
 	^UpLayer popup
 		containing: UpNameSuggester new;
-		onClosed: [ :event | self onNameSuggesterClosed: event];
+		onAnswer: [ :name | self model name: name];
 		onClosedReload: '#name-field';
 		yourself!
 
@@ -55,10 +55,6 @@ newCompanyLayer
 		onClosed: [ :event | self onNewCompanyEditorClosed: event];
 		onClosedReload: '#company';
 		yourself!
-
-onNameSuggesterClosed: anUpEvent
-
-	anUpEvent isDismissal ifFalse: [self model name: anUpEvent value]!
 
 onNewCompanyEditorClosed: closeEvent
 
@@ -129,7 +125,6 @@ companyErrorMessage!accessing!private! !
 isFromCompanyPresenter!public!testing! !
 nameSuggester!accessing!public! !
 newCompanyLayer!accessing!public! !
-onNameSuggesterClosed:!event handling!public! !
 onNewCompanyEditorClosed:!event handling!public! !
 refreshErrorMessages!operations!private! !
 renderFormFieldsOn:!public!rendering! !

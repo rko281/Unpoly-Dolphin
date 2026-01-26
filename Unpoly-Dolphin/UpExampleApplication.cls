@@ -61,10 +61,6 @@ onEditorClosed: closeEvent model: aModel
 		[self add: closeEvent layer component model.
 		self session notification: [ :html | html alert beSuccess; with: '<1s> saved successfully' << self modelClass description]]!
 
-onPresenterClosed: closeEvent model: aModel
-
-	closeEvent value = #deleted ifTrue: [self delete: aModel]!
-
 presenterClass
 
 	^self modelClass presenterClass!
@@ -76,7 +72,7 @@ presenterLayerFor: aModel
 			[self exampleWait. 
 			self presenterClass on: aModel];
 		placeholder: self presenterClass asPlaceholder;
-		onClosed: [ :closeEvent | self onPresenterClosed: closeEvent model: closeEvent layer component model];
+		onAnswer: [ :result | result = #deleted ifTrue: [self delete: aModel]];
 		onClosedReload: '.table';
 		yourself!
 
@@ -187,7 +183,6 @@ modelClass!constants!public! !
 newModel!accessing!public! !
 newModelEditorLayer!accessing!public! !
 onEditorClosed:model:!event handling!public! !
-onPresenterClosed:model:!event handling!public! !
 presenterClass!constants!public! !
 presenterLayerFor:!accessing!public! !
 renderAdditionalColumnHeadingsOn:!private!rendering! !
