@@ -152,7 +152,7 @@ WAHtmlDocument subclass: #UpHtmlDocument
 	classInstanceVariableNames: ''!
 
 UpHtmlDocument subclass: #UpSelectiveRenderingHtmlDocument
-	instanceVariableNames: 'renderingDepth silencedStream classesToRender idsToRender callbackKeys'
+	instanceVariableNames: 'renderingDepth silencedStream classesToRender idsToRender callbackKeys targetChanged'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!

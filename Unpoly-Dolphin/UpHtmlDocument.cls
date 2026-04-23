@@ -14,6 +14,18 @@ UpHtmlDocument comment: ''!
 
 !UpHtmlDocument methodsFor!
 
+addClassToRender: aString
+
+	"A no-op for this type of document"
+
+	^aString!
+
+addIdToRender: aString
+
+	"A no-op for this type of document"
+
+	^aString!
+
 openTag: aString attributes: anAttributes closed: aBoolean
 
 	anAttributes ifNotNil: [ :attr | attr at: #_tag_ ifPresent: [ :tag | tag upBefore]].
@@ -21,6 +33,8 @@ openTag: aString attributes: anAttributes closed: aBoolean
 	^super openTag: aString attributes: anAttributes closed: aBoolean! !
 
 !UpHtmlDocument categoriesForMethods!
+addClassToRender:!adding!public! !
+addIdToRender:!adding!public! !
 openTag:attributes:closed:!private!writing! !
 !
 

@@ -1,7 +1,7 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
 UpHtmlDocument subclass: #UpSelectiveRenderingHtmlDocument
-	instanceVariableNames: 'renderingDepth silencedStream classesToRender idsToRender callbackKeys'
+	instanceVariableNames: 'renderingDepth silencedStream classesToRender idsToRender callbackKeys targetChanged'
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
@@ -14,9 +14,47 @@ UpSelectiveRenderingHtmlDocument comment: ''!
 
 !UpSelectiveRenderingHtmlDocument methodsFor!
 
+_addClassToRender: aString
+
+	classesToRender isNil 
+		ifTrue: [classesToRender := OrderedCollection with: aString]
+		ifFalse: [classesToRender add: aString].
+
+	^aString!
+
+_addIdToRender: aString
+
+	idsToRender isNil 
+		ifTrue: [idsToRender := OrderedCollection with: aString]
+		ifFalse: [idsToRender add: aString].
+
+	^aString!
+
+addClassToRender: aString
+
+	"Request that the html class aString is always rendered regardless of what was requested"
+
+	(idsToRender isNil and: [classesToRender isNil]) ifFalse: 
+		[targetChanged := true.
+		self _addClassToRender: aString].
+
+	^aString!
+
+addIdToRender: aString
+
+	"Request that the id aString is always rendered regardless of what was requested"
+
+	(idsToRender isNil and: [classesToRender isNil]) ifFalse: 
+		[targetChanged := true.
+		self _addIdToRender: aString].
+
+	^aString!
+
 close
 
 	self removeUnusedCallbacks.
+
+	targetChanged ifTrue: [self requestContext response headerAt: 'X-Up-Target' put: self upTargetString].
 	
 	super close!
 
@@ -38,6 +76,7 @@ isRendering
 open: aRoot
 
 	classesToRender := idsToRender := nil.
+	targetChanged := false.
 	callbackKeys := OrderedCollection new.
 
 	self parseReloadHeader.
@@ -77,8 +116,8 @@ parseReloadHeader
 		[| next |
 		next := readStream upTo: $,.
 		next first = $. 
-			ifTrue: [classesToRender := (classesToRender ifNil: [#()]), {next allButFirst}]
-			ifFalse: [next first = $# ifTrue: [idsToRender := (idsToRender ifNil: [#()]), {next allButFirst}]].
+			ifTrue: [self _addClassToRender: next allButFirst]
+			ifFalse: [next first = $# ifTrue: [self _addIdToRender: next allButFirst]].
 		readStream skipSeparators]!
 
 removeUnusedCallbacks
@@ -115,9 +154,28 @@ stopRendering
 
 	renderingDepth := nil.
 	silencedStream := stream.
-	stream := NullStream new! !
+	stream := NullStream new!
+
+upTargetString
+
+	| writeStream |
+
+	writeStream := WriteStream on: (String new: 32).
+
+	idsToRender isNil ifFalse: 
+		[idsToRender do: [ :each | writeStream nextPut: $#; nextPutAll: each] separatedBy: [writeStream nextPutAll: ', ']].
+	
+	classesToRender isNil ifFalse: 
+		[idsToRender isNil ifFalse: [writeStream nextPutAll: ', '].
+		classesToRender do: [ :each | writeStream nextPut: $.; nextPutAll: each] separatedBy: [writeStream nextPutAll: ', ']].
+
+	^writeStream contents! !
 
 !UpSelectiveRenderingHtmlDocument categoriesForMethods!
+_addClassToRender:!adding!private! !
+_addIdToRender:!adding!private! !
+addClassToRender:!adding!public! !
+addIdToRender:!adding!public! !
 close!initialization!public! !
 closeTag:!public!writing! !
 decrementRenderingDepth!helpers!private! !
@@ -129,5 +187,6 @@ removeUnusedCallbacks!helpers!private! !
 shouldRenderAttributes:!private!testing! !
 startRendering!helpers!private! !
 stopRendering!helpers!private! !
+upTargetString!helpers!private! !
 !
 
