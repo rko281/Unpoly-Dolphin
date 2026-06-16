@@ -1,6 +1,6 @@
 ﻿"Filed out from Dolphin Smalltalk"!
 
-SBSFileLibrary subclass: #UpBootstrap5Library
+SSWFileLibrary subclass: #UpBootstrap5Library
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -14,22 +14,20 @@ UpBootstrap5Library comment: ''!
 
 !UpBootstrap5Library methodsFor!
 
-cssunpolybootstrap5Css
-	^ WAFileLibraryResource
-		filepath: 'css/unpoly.bootstrap5.css'
-		mimeType: (WAMimeType main: 'text' sub: 'css')
-		cacheDuration: (Duration days: 0 hours: 0 minutes: 30 seconds: 0)
-		contents: (GRDelayedSend receiver: self selector: #cssunpolybootstrap5CssContent)!
-
 cssunpolybootstrap5CssContent
+
+	##(Pragma css: 'css/unpoly.bootstrap5.css').
 
 	^'up-modal .container,up-modal .container-fluid,up-drawer .container,up-drawer .container-fluid,up-popup .container,up-popup .container-fluid{padding-left:0;padding-right:0;max-width:none}'!
 
-selectorsToInclude	^#(#cssunpolybootstrap5Css)! !
+jsbootstrapbundleminJsContent
+
+	##(Pragma javascript: 'js/bootstrap.bundle.min.js').
+
+	^SBSDeploymentLibrary basicNew jsbootstrapbundleminJsContent! !
 
 !UpBootstrap5Library categoriesForMethods!
-cssunpolybootstrap5Css!public! !
 cssunpolybootstrap5CssContent!public! !
-selectorsToInclude!accessing!public! !
+jsbootstrapbundleminJsContent!public! !
 !
 

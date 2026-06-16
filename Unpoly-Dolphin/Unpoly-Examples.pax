@@ -28,19 +28,19 @@ package globalAliases: (Set new
 	yourself).
 
 package setPrerequisites: #(
-	'..\Seaside-Bootstrap5\Bootstrap5-Core'
 	'..\Core\Object Arts\Dolphin\Base\Dolphin'
-	'..\Grease\Grease-Core'
+	'..\Portishead\Portishead-Pragmas'
 	'..\Seaside\Seaside\Seaside-Component'
 	'..\Seaside\Seaside\Seaside-Core'
 	'..\Seaside\Seaside\Seaside-Examples'
+	'..\Seaside-Extras-Dolphin\Seaside-Extras'
 	'Unpoly-Core').
 
 package!
 
 "Class Definitions"!
 
-SBSFileLibrary subclass: #UpExamplesLibrary
+SSWFileLibrary subclass: #UpExamplesLibrary
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''

@@ -100,13 +100,14 @@ package setPrerequisites: #(
 	'..\Seaside-Extras-Dolphin\Bootstrap5-Extras'
 	'..\Core\Object Arts\Dolphin\Base\Dolphin'
 	'..\Core\Object Arts\Dolphin\MVP\Base\Dolphin MVP Base'
-	'..\Grease\Grease-Core'
 	'..\Seaside\Javascript\Javascript-Core'
 	'..\Seaside-Extras-Dolphin\Javascript-Extras'
+	'..\Portishead\Portishead-Pragmas'
 	'..\Seaside\Seaside\Seaside-Canvas'
 	'..\Seaside\Seaside\Seaside-Component'
 	'..\Seaside\Seaside\Seaside-Core'
 	'..\Seaside\Seaside\Seaside-Dolphin-Core'
+	'..\Seaside-Extras-Dolphin\Seaside-Extras'
 	'..\Seaside\Seaside\Seaside-RenderLoop'
 	'..\Seaside\Seaside\Seaside-Session'
 	'..\Seaside\Seaside\Seaside-Tools-Core'
@@ -133,13 +134,13 @@ WAObject subclass: #UpLayer
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
-SBSFileLibrary subclass: #UpBootstrap5Library
+SSWFileLibrary subclass: #UpBootstrap5Library
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	classInstanceVariableNames: ''!
 
-SBSFileLibrary subclass: #UpDeploymentLibrary
+SSWFileLibrary subclass: #UpDeploymentLibrary
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -477,7 +478,9 @@ asUpTarget
 
 beUpTarget
 
-	"an id is required"
+	"Assign an ID so this element can be used as an Unpoly target.
+	Note the ID must remain the same on each rendering so this method is only suitable where layout is static (same elements encountered in same order).
+	Where this is not the case you should assign a constant ID manually or use a non-ambiguous .class attribute"
 
 	self ensureId!
 
@@ -626,8 +629,11 @@ upSubmit: aBoolean
 
 upTarget: anObject
 
-	"anObject may be a String denoting an html id/class/element with the appropriate prefix (# / . / :)
-	or a previously-rendered Tag object"
+	"anObject may be a String denoting an id or css class (or space-separated collection there of) with the appropriate prefix (# or  .) or a previously-rendered Tag object with an assigned ID.
+	Note that we do not support ambiguous targets so a class target must be unique in the page.
+	For the same reason we do not support targetting by tag since this are highly likely to be ambiguous.
+	Ambiguous targets are automatically changed to :main on load.
+	See https://unpoly.com/targeting-fragments#ambiguous-selectors"
 
 	self attributeAt: 'up-target' put: anObject asUpTarget!
 

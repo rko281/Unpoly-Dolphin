@@ -92,33 +92,44 @@ renderExampleOn: html
 
 	self currentExample ifNotNil: [ :child | html render: child]!
 
-renderNavigationBarOn: html	html navigationBar 
+renderNavigationBarOn: html
+
+	html navigationBar 
+		fixedTop;
 		expandMiddle;
 		beLight;
 		lightBackground;
-		class: 'fixed-top';		with: 
-			[html navigationBarBrand
-				url: (WAUrl absolute: self class contextRoot);
-				with: 'Unpoly Demo'.
-			html navigationBarNavigation:
-				[self exampleClasses do: 
-					[ :cls || item|
-					item := html navigationLink.
-					item 
-						callback: [ self navigateToExampleClass: cls ];
-						class: 'nav-item';
-						upTarget: '.current-example';
-						url: (WAUrl new path: {self class contextRoot. cls subPath});
-						with: cls exampleName ]].
-			html div 
-				class: 'flashes-explainer'; 
-				upAnchored: 'right'; 
-				with: 'Notifications go here'].
+		with: 
+			[html containerFluid: 
+				[html navigationBarBrand
+					url: (WAUrl absolute: self class contextRoot);
+					with: 'Unpoly Demo'.
+				html navigationBarToggler
+					beButtonType; 
+					collapse;
+					toggle: 'mainNav';
+					ariaLabel: 'Toggle navigation';
+					with: [html navigationBarTogglerIcon].
+				html navigationBarCollapse
+					collapse;
+					id: 'mainNav'; 
+					with: 
+						[html navigationBarNavigation
+							marginEnd: 'auto'; 
+							with:
+								[self exampleClasses do: 
+									[ :cls |
+									html navigationItem:
+										[html navigationLink
+											callback: [ self navigateToExampleClass: cls ];
+											upTarget: '.current-example';
+											url: (WAUrl new path: {self class contextRoot. cls subPath});
+											with: cls exampleName ]]]]]].
 
-	"Required - rferenced from example js"
-	html div 
-		id: 'new-version';
-		attributeAt: 'hidden' put: true!
+		"Required - rferenced from example js"
+		html div 
+			id: 'new-version';
+			attributeAt: 'hidden' put: true!
 
 renderToolbarOn: html
 

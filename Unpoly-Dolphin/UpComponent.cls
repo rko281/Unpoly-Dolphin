@@ -77,6 +77,10 @@ states
 
 	^{self session currentLayerState}!
 
+updateRoot: htmlRoot
+	"Responsive by default"
+	super updateRoot: htmlRoot.	htmlRoot beResponsive!
+
 upLayerDecoration
 
 	"Polymorphic with WADecoration"
@@ -93,6 +97,7 @@ rendererClass!public!rendering! !
 shouldDisableUnpolyCaching!public!testing! !
 show:onAnswer:!delegation!public! !
 states!accessing!public! !
+updateRoot:!public!updating! !
 upLayerDecoration!accessing!private! !
 !
 

@@ -109,7 +109,7 @@ parseReloadHeader
 
 	| reloadHeader readStream |
 
-	reloadHeader := self requestContext request headerAt: 'X-Up-Target'.
+	reloadHeader := self requestContext request upTarget.
 	readStream := reloadHeader readStream.
 
 	[readStream atEnd] whileFalse: 
@@ -135,7 +135,7 @@ shouldRenderAttributes: anAttributes
 		[(anAttributes at: 'class' ifAbsent: [nil]) ifNotNil: 
 			[ :cls | 
 			(cls isConcatenatedHtmlAttributeValue
-				ifTrue: [classesToRender anySatisfy: [ :each | cls includes: each]]
+				ifTrue: [(cls includes: 'placeholder') not and: [classesToRender anySatisfy: [ :each | cls includes: each]]]
 				ifFalse: [classesToRender includes: cls]) ifTrue: [^true]]].
 
 	idsToRender notNil ifTrue: 
